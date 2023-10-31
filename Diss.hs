@@ -1,0 +1,80 @@
+data Prop = Const Bool
+          | Var Char
+          | Not Prop
+          | And Prop Prop
+          | Imply Prop Prop
+
+-- A and Not A
+p1 :: Prop 
+p1 = And (Var 'A')(Not(Var 'A'))
+
+-- A and B implies A
+p2 :: Prop
+p2 = Imply (And (Var 'A') (Var 'B')) (Var 'A')
+
+-- A implies A and B
+p3 :: Prop
+p3 = Imply (Var 'A') (And (Var 'A') (Var 'B'))
+
+-- (A and A implies B) implies B
+p4 :: Prop
+p4 = Imply (And (Var 'A') (Imply (Var 'A') (Var 'B'))) (Var 'B')
+
+
+-- (A and B implies B and C)
+p5 :: Prop
+p5 = Imply (And (Var 'A') (Var 'B')) (And (Var 'B') (Var 'C'))
+
+-- Need to know value of variables - associates variables to logical values
+type Subst = Assoc Char Bool
+
+type Assoc a b = [(a, b)]
+
+find :: Eq k => k -> Assoc k v -> v
+find k t = head [v | (k',v) <- t, k ==k']
+
+rmdups :: Eq a => [a] -> [a]
+rmdups [] = []
+rmdups (x:xs) = x: filter (/= x) (rmdups xs)
+
+-- Function for evaluating prop given sub for variables on 5 possible forms
+eval :: Subst -> Prop -> Bool
+eval _ (Const b)   = b
+eval s (Var x)     = find x s
+eval s (Not p)     = not (eval s p)
+eval s (And p q)   = eval s p && eval s q
+eval s (Imply p q) = eval s p <= eval s q
+
+-- Consider all possible substitutions for variables a proposition contains
+vars :: Prop -> [Char]
+vars (Const _)   = []
+vars (Var x)     = [x]
+vars (Not p)     = vars p
+vars (And p q)   = vars p ++ vars q
+vars (Imply p q) = vars p ++ vars q
+
+-- Return all possible lists of logical values
+-- Take 2 copies of lists produced, place False in one and True the other
+bools :: Int -> [[Bool]]
+bools 0 = [[]]
+bools n = map (False:) bss ++ map (True:) bss
+          where bss = bools (n-1)
+
+substs :: Prop -> [Subst]
+substs p = map (zip vs) (bools (length vs))
+           where vs = rmdups (vars p)
+
+isTaut :: Prop -> Bool
+isTaut p = and [eval s p | s <- substs p]
+
+createTruthTable :: Prop -> IO ()
+createTruthTable prop = do
+  let variables = rmdups (vars prop)
+  let header =  variables ++ "\t" ++ "Result"
+  let substitutions = substs prop
+  let table = [(map (\var -> if find var s then 'T' else 'F') variables, eval s prop) | s <- substitutions]
+  
+  putStrLn header
+  mapM_ (\(vars', result) -> putStrLn (vars' ++ "\t" ++ if result then "T" else "F")) table
+
+  
