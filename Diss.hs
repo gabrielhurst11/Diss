@@ -3,6 +3,15 @@ data Prop = Const Bool
           | Not Prop
           | And Prop Prop
           | Imply Prop Prop
+          deriving (Eq)
+
+-- Define a Show instance for Prop
+instance Show Prop where
+    show (Const b) = show b
+    show (Var x) = [x]
+    show (Not p) = "Not (" ++ show p ++ ")"
+    show (And p q) = "(" ++ show p ++ " And " ++ show q ++ ")"
+    show (Imply a b) = "(" ++ show a ++ " => " ++ show b ++ ")"
 
 -- A and Not A
 p1 :: Prop 
@@ -77,4 +86,20 @@ createTruthTable prop = do
   putStrLn header
   mapM_ (\(vars', result) -> putStrLn (vars' ++ "\t" ++ if result then "T" else "F")) table
 
-  
+isSatisfiable :: Prop -> Bool
+isSatisfiable p = or [eval s p | s <- substs p]
+
+condition :: Prop
+condition = Imply (Var 'A') (Var 'B')
+
+antecedent :: Prop
+antecedent = Var 'A'
+
+consequent :: Prop
+consequent = Var 'B'
+
+-- Define a function to apply Modus Ponens
+modusPonens :: Prop -> Prop -> Prop -> Maybe Prop
+modusPonens con ant csq
+    | con == Imply ant csq = Just csq
+    | otherwise = Nothing
