@@ -11,7 +11,7 @@ instance Show Prop where
     show (Var x) = [x]
     show (Not p) = "Not (" ++ show p ++ ")"
     show (And p q) = "(" ++ show p ++ " And " ++ show q ++ ")"
-    show (Imply a b) = "(" ++ show a ++ " => " ++ show b ++ ")"
+    show (Imply a b) = "(" ++ show a ++ " -> " ++ show b ++ ")"
 
 -- A and Not A
 p1 :: Prop 
@@ -89,6 +89,9 @@ createTruthTable prop = do
 isSatisfiable :: Prop -> Bool
 isSatisfiable p = or [eval s p | s <- substs p]
 
+-- Set up Prop to check Modus Ponens can be applied
+-- A implies B
+-- A and B also defined
 condition :: Prop
 condition = Imply (Var 'A') (Var 'B')
 
@@ -103,3 +106,27 @@ modusPonens :: Prop -> Prop -> Prop -> Maybe Prop
 modusPonens con ant csq
     | con == Imply ant csq = Just csq
     | otherwise = Nothing
+
+conjInt :: Prop -> Prop -> Prop
+conjInt x y = And x y
+
+conjCheck :: Prop
+conjCheck = And (Var 'A') (Var 'B')
+
+conjElimL :: Prop -> Prop
+conjElimL (And p q) = p 
+
+conjElimR :: Prop -> Prop
+conjElimR (And p q) = q
+
+impCheck1 :: Prop
+impCheck1 = Imply (Var 'A') (Var 'B')
+
+impCheck2 :: Prop
+impCheck2 = (Var 'A')
+
+impElim :: Prop -> Prop -> Maybe Prop
+impElim (Imply p q) (y)
+    | p == y = Just q
+    | otherwise = Nothing
+
