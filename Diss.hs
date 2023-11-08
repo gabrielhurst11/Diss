@@ -2,6 +2,7 @@ data Prop = Const Bool
           | Var Char
           | Not Prop
           | And Prop Prop
+          | Or Prop Prop
           | Imply Prop Prop
           deriving (Eq)
 
@@ -12,6 +13,7 @@ instance Show Prop where
     show (Not p) = "Not (" ++ show p ++ ")"
     show (And p q) = "(" ++ show p ++ " And " ++ show q ++ ")"
     show (Imply a b) = "(" ++ show a ++ " -> " ++ show b ++ ")"
+    show (Or a b) = "(" ++ show a ++ " Or " ++ show b ++ ")"
 
 -- A and Not A
 p1 :: Prop 
@@ -34,6 +36,10 @@ p4 = Imply (And (Var 'A') (Imply (Var 'A') (Var 'B'))) (Var 'B')
 p5 :: Prop
 p5 = Imply (And (Var 'A') (Var 'B')) (And (Var 'B') (Var 'C'))
 
+-- A or B
+p6 :: Prop
+p6 = Or (Var 'A') (Var 'B')
+
 -- Need to know value of variables - associates variables to logical values
 type Subst = Assoc Char Bool
 
@@ -53,6 +59,7 @@ eval s (Var x)     = find x s
 eval s (Not p)     = not (eval s p)
 eval s (And p q)   = eval s p && eval s q
 eval s (Imply p q) = eval s p <= eval s q
+eval s (Or p q)    = (eval s p) || (eval s q)
 
 -- Consider all possible substitutions for variables a proposition contains
 vars :: Prop -> [Char]
@@ -61,6 +68,7 @@ vars (Var x)     = [x]
 vars (Not p)     = vars p
 vars (And p q)   = vars p ++ vars q
 vars (Imply p q) = vars p ++ vars q
+vars (Or p q)    = vars p ++ vars q
 
 -- Return all possible lists of logical values
 -- Take 2 copies of lists produced, place False in one and True the other
@@ -130,3 +138,13 @@ impElim (Imply p q) (y)
     | p == y = Just q
     | otherwise = Nothing
 
+disjTest :: Prop
+disjTest = Var 'A'
+
+disjIntL :: Prop -> Prop
+disjIntL p = Or p q where q = (Var 'Z') 
+
+disjIntR :: Prop -> Prop
+disjIntR p = Or q p where q = (Var 'Z')
+
+   
