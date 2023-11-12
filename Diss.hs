@@ -81,6 +81,8 @@ substs :: Prop -> [Subst]
 substs p = map (zip vs) (bools (length vs))
            where vs = rmdups (vars p)
 
+
+-- Check if ALL values return true - tautology
 isTaut :: Prop -> Bool
 isTaut p = and [eval s p | s <- substs p]
 
@@ -94,6 +96,7 @@ createTruthTable prop = do
   putStrLn header
   mapM_ (\(vars', result) -> putStrLn (vars' ++ "\t" ++ if result then "T" else "F")) table
 
+--Checks if any possible values return true (Satisfiable)
 isSatisfiable :: Prop -> Bool
 isSatisfiable p = or [eval s p | s <- substs p]
 
@@ -115,15 +118,18 @@ modusPonens con ant csq
     | con == Imply ant csq = Just csq
     | otherwise = Nothing
 
+-- Returns conjunction if 2 values are known
 conjInt :: Prop -> Prop -> Prop
 conjInt x y = And x y
 
 conjCheck :: Prop
 conjCheck = And (Var 'A') (Var 'B')
 
+-- Removes conjunction Left 
 conjElimL :: Prop -> Prop
 conjElimL (And p q) = p 
 
+-- Removes conjunction Right
 conjElimR :: Prop -> Prop
 conjElimR (And p q) = q
 
@@ -133,6 +139,7 @@ impCheck1 = Imply (Var 'A') (Var 'B')
 impCheck2 :: Prop
 impCheck2 = (Var 'A')
 
+-- If implication known q returned
 impElim :: Prop -> Prop -> Maybe Prop
 impElim (Imply p q) (y)
     | p == y = Just q
@@ -141,9 +148,11 @@ impElim (Imply p q) (y)
 disjTest :: Prop
 disjTest = Var 'A'
 
+-- Introduces disjunction on the left
 disjIntL :: Prop -> Prop
 disjIntL p = Or p q where q = (Var 'Z') 
 
+-- Introduces disjunction on the right
 disjIntR :: Prop -> Prop
 disjIntR p = Or q p where q = (Var 'Z')
 
