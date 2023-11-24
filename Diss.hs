@@ -157,3 +157,10 @@ disjIntR :: Prop -> Prop
 disjIntR p = Or q p where q = (Var 'Z')
 
    
+-- Find a way to implement a -> b [x...a] / a
+-- Natural deduction (Represented as a tree?)
+data Tree a = Leaf a | Node (Tree a) (Tree a)
+
+-- Example Tree
+exampleTree :: Tree Prop
+exampleTree = Node (Node (Leaf p1) (Leaf p2)) (Leaf p3)
