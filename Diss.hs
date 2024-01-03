@@ -15,31 +15,6 @@ instance Show Prop where
     show (Imply a b) = "(" ++ show a ++ " -> " ++ show b ++ ")"
     show (Or a b) = "(" ++ show a ++ " Or " ++ show b ++ ")"
 
--- A and Not A
-p1 :: Prop 
-p1 = And (Var 'A')(Not(Var 'A'))
-
--- A and B implies A
-p2 :: Prop
-p2 = Imply (And (Var 'A') (Var 'B')) (Var 'A')
-
--- A implies A and B
-p3 :: Prop
-p3 = Imply (Var 'A') (And (Var 'A') (Var 'B'))
-
--- (A and A implies B) implies B
-p4 :: Prop
-p4 = Imply (And (Var 'A') (Imply (Var 'A') (Var 'B'))) (Var 'B')
-
-
--- (A and B implies B and C)
-p5 :: Prop
-p5 = Imply (And (Var 'A') (Var 'B')) (And (Var 'B') (Var 'C'))
-
--- A or B
-p6 :: Prop
-p6 = Or (Var 'A') (Var 'B')
-
 -- Need to know value of variables - associates variables to logical values
 type Subst = Assoc Char Bool
 
@@ -164,3 +139,28 @@ data Tree a = Leaf a | Node (Tree a) (Tree a)
 -- Example Tree
 exampleTree :: Tree Prop
 exampleTree = Node (Node (Leaf p1) (Leaf p2)) (Leaf p3)
+
+-- A and Not A
+p1 :: Prop 
+p1 = And (Var 'A')(Not(Var 'A'))
+
+-- A and B implies A
+p2 :: Prop
+p2 = Imply (And (Var 'A') (Var 'B')) (Var 'A')
+
+-- A implies A and B
+p3 :: Prop
+p3 = Imply (Var 'A') (And (Var 'A') (Var 'B'))
+
+-- (A and A implies B) implies B
+p4 :: Prop
+p4 = Imply (And (Var 'A') (Imply (Var 'A') (Var 'B'))) (Var 'B')
+
+
+-- (A and B implies B and C)
+p5 :: Prop
+p5 = Imply (And (Var 'A') (Var 'B')) (And (Var 'B') (Var 'C'))
+
+-- A or B
+p6 :: Prop
+p6 = Or (Var 'A') (Var 'B')
