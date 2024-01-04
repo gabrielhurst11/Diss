@@ -97,9 +97,6 @@ modusPonens con ant csq
 conjInt :: Prop -> Prop -> Prop
 conjInt x y = And x y
 
-conjCheck :: Prop
-conjCheck = And (Var 'A') (Var 'B')
-
 -- Removes conjunction Left 
 conjElimL :: Prop -> Prop
 conjElimL (And p q) = p 
@@ -108,11 +105,6 @@ conjElimL (And p q) = p
 conjElimR :: Prop -> Prop
 conjElimR (And p q) = q
 
-impCheck1 :: Prop
-impCheck1 = Imply (Var 'A') (Var 'B')
-
-impCheck2 :: Prop
-impCheck2 = (Var 'A')
 
 -- If implication known q returned
 impElim :: Prop -> Prop -> Maybe Prop
@@ -120,8 +112,6 @@ impElim (Imply p q) (y)
     | p == y = Just q
     | otherwise = Nothing
 
-disjTest :: Prop
-disjTest = Var 'A'
 
 -- Introduces disjunction on the left
 disjIntL :: Prop -> Prop
@@ -164,3 +154,15 @@ p5 = Imply (And (Var 'A') (Var 'B')) (And (Var 'B') (Var 'C'))
 -- A or B
 p6 :: Prop
 p6 = Or (Var 'A') (Var 'B')
+
+conjCheck :: Prop
+conjCheck = And (Var 'A') (Var 'B')
+
+impCheck1 :: Prop
+impCheck1 = Imply (Var 'A') (Var 'B')
+
+impCheck2 :: Prop
+impCheck2 = (Var 'A')
+
+disjTest :: Prop
+disjTest = Var 'A'
