@@ -126,9 +126,32 @@ disjIntR p = Or q p where q = (Var 'Z')
 -- Natural deduction (Represented as a tree?)
 data Tree a = Leaf a | Node (Tree a) (Tree a)
 
--- Example Tree
-exampleTree :: Tree Prop
-exampleTree = Node (Node (Leaf p1) (Leaf p2)) (Leaf p3)
+-- Natural Deduction Tree
+naturalDedTree :: Tree Prop
+naturalDedTree = Node (Node (Leaf p1) (Leaf p2)) (Leaf p3)
+
+data NDTree = Assumption Prop
+            | Rule String [NDTree] Prop
+
+exampleProofTree :: NDTree
+exampleProofTree = Rule "Final Rule" [stepB, stepC] (Var 'l')
+  where
+    stepB = Rule "Some Rule" [Assumption (Var 'a')] (Var 'b')
+    stepC = Rule "Another Rule" [Assumption (Var 'b')] (Var 'c')
+
+-- Function to convert NDTree to a string representation with indentation
+printNDTree :: NDTree -> IO ()
+printNDTree tree = printNDTreeHelper 0 tree
+  where
+    printNDTreeHelper indent (Assumption p) = putStrLn $ replicate indent ' ' ++ "Assumption: " ++ show p
+    printNDTreeHelper indent (Rule ruleName premises conclusion) = do
+        putStrLn $ replicate indent ' ' ++ "Rule: " ++ ruleName
+        mapM_ (printNDTreeHelper (indent + 2)) premises
+        putStrLn $ replicate indent ' ' ++ "Conclusion: " ++ show conclusion
+
+
+myTree :: NDTree
+myTree = Rule "Implication Elimination" [Assumption (Var 'A'), Rule "Modus Ponens" [Assumption (Imply (Var 'A') (Var 'B'))] (Var 'B')] (Var 'B')
 
 -- A and Not A
 p1 :: Prop 
@@ -166,3 +189,41 @@ impCheck2 = (Var 'A')
 
 disjTest :: Prop
 disjTest = Var 'A'
+
+-- Main function
+main :: IO ()
+main = do
+    let a = Var 'A'
+    let b = Var 'B'
+    let c = Var 'C'
+    let aImpB = Imply a b
+    let bImpC = Imply b c
+    let aImpC = Imply a c
+
+    let premise1 = Assumption aImpB
+    let premise2 = Assumption bImpC
+    let premise3 = Assumption a
+
+    let step1 = Rule "Modus Ponens on A -> B and A" [premise1, premise3] b
+    let step2 = Rule "Modus Ponens on B -> C and B" [premise2, step1] c
+    let conclusion = Rule "Hypothetical Syllogism from A -> B, B -> C to A -> C" [premise1, premise2, step2] aImpC
+
+    printNDTree conclusion
+
+
+proofExample :: IO ()
+proofExample = do
+    let p = Var 'P'
+    let q = Var 'Q'
+    let pAndQ = And p q
+    let qAndP = And q p
+    let pAndQImpQAndP = Imply pAndQ qAndP
+    let premise1 = Assumption pAndQ
+    let premise2 = Assumption p
+    let premise3 = Assumption q
+
+    let step1 = Rule "Conjunction Elimination on P AND Q" [premise1] p
+    let step2 = Rule "Conjunction Elimination on P AND Q" [premise1] q
+    let step3 = Rule "Conjunction Introduction on P, Q" [premise2, premise3] qAndP
+    let conclusion = Rule "Implication Introduction on P AND Q, Q AND P" [premise1, step3] pAndQImpQAndP
+    printNDTree conclusion
