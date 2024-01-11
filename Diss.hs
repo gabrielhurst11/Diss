@@ -93,6 +93,9 @@ modusPonens con ant csq
     | con == Imply ant csq = Just csq
     | otherwise = Nothing
 
+negation :: Prop -> Prop
+negation p = Not p
+
 -- Returns conjunction if 2 values are known
 conjInt :: Prop -> Prop -> Prop
 conjInt x y = And x y
