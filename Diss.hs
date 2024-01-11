@@ -230,3 +230,33 @@ proofExample = do
     let step3 = Rule "Conjunction Introduction on P, Q" [premise2, premise3] qAndP
     let conclusion = Rule "Implication Introduction on P AND Q, Q AND P" [premise1, step3] pAndQImpQAndP
     printNDTree conclusion
+
+
+elimImp :: Prop -> Prop
+elimImp (Imply p q) = Or (Not (elimImp p)) (elimImp q)
+elimImp (And p q) = And (elimImp p) (elimImp q)
+elimImp (Or p q) = Or (elimImp p) (elimImp q)
+elimImp (Not p) = Not (elimImp p)
+elimImp p = p
+
+pushNegation :: Prop -> Prop
+pushNegation (Not (Not p))  = pushNegation p
+pushNegation (Not (And p q)) = Or (pushNegation (Not p)) (pushNegation (Not q))
+pushNegation (Not (Or p q))  = And (pushNegation (Not p)) (pushNegation (Not q))
+pushNegation (And p q)      = And (pushNegation p) (pushNegation q)
+pushNegation (Or p q)       = Or (pushNegation p) (pushNegation q)
+pushNegation p              = p
+
+distribute :: Prop -> Prop
+distribute (Or p (And q r)) = And (distribute (Or p q)) (distribute (Or p r))
+distribute (Or (And p q) r) = And (distribute (Or p r)) (distribute (Or q r))
+distribute (And p q)        = And (distribute p) (distribute q)
+distribute (Or p q)         = Or (distribute p) (distribute q)
+distribute p                = p 
+
+
+convertCNF :: Prop -> Prop
+convertCNF p = distribute(pushNegation (elimImp(p)))
+
+pTest :: Prop
+pTest = Imply (And (Var 'P') (Var 'Q')) (And (Var 'Q') (Var 'R'))
