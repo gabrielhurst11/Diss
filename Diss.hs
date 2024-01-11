@@ -259,4 +259,4 @@ convertCNF :: Prop -> Prop
 convertCNF p = distribute(pushNegation (elimImp(p)))
 
 pTest :: Prop
-pTest = Imply (And (Var 'P') (Var 'Q')) (And (Var 'Q') (Var 'R'))
+pTest = Imply (Or (Var 'P') (Var 'Q')) (Or (Var 'Q') (Var 'R'))
