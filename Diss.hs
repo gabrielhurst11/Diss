@@ -255,6 +255,7 @@ distribute (Or p q)         = Or (distribute p) (distribute q)
 distribute p                = p 
 
 
+
 convertCNF :: Prop -> Prop
 convertCNF p = distribute(pushNegation (elimImp(p)))
 
