@@ -71,9 +71,6 @@ createTruthTable prop = do
   putStrLn header
   mapM_ (\(vars', result) -> putStrLn (vars' ++ "\t" ++ if result then "T" else "F")) table
 
---Checks if any possible values return true (Satisfiable)
-isSatisfiable :: Prop -> Bool
-isSatisfiable p = or [eval s p | s <- substs p]
 
 -- Set up Prop to check Modus Ponens can be applied
 -- A implies B
