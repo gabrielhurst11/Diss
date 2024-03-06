@@ -1,4 +1,5 @@
 module Main where
+    
 
 import Examples
 import Propositional
@@ -11,3 +12,5 @@ main = do
     putStrLn "Here are some example propositions:"
     print p1
     print p2
+
+
