@@ -25,76 +25,73 @@
 </head>
 <body>
     <div id="messages"></div>
-    <input type="text" id="messageInput" placeholder="Type a message...">
-    <button onclick="sendMessage()">Send</button>
+    <input type="text" id="expressionInput" placeholder="Type a message...">
+    <button onclick="sendProposition()">Submit</button>
 
     <div id="output"></div>
 
     <script>
-        // Connect to the WebSocket server
-        const socket = new WebSocket('ws://localhost:8080');
+    // Connect to the WebSocket server
+    const socket = new WebSocket('ws://localhost:8080');
 
-        // Send an expression to the server
-        socket.onopen = function() {
-            const expression = 'And Var \'B\' Var \'C\'';
-            socket.send(expression);
-        };
+    // Function to send a proposition to the server
+    function sendProposition() {
+        console.log("Button clicked"); // Check if the function is called
+        const expression = document.getElementById('expressionInput').value;
+        socket.send(expression);
+    }
 
-        // Receive and process message from the server
-        socket.onmessage = function(event) {
-            const data = event.data;
-            updateUI(data);
-        };
+    // Function to update the UI with the received data
+    function updateUI(data) {
+        const outputDiv = document.getElementById("output");
+        outputDiv.innerHTML = "<h2>Truth Table</h2>";
+        outputDiv.innerHTML += createTableFromData(data);
+    }
 
-        // Function to update the UI with the received data
-// Function to update the UI with the received data
-        function updateUI(data) {
-            const outputDiv = document.getElementById("output");
-            outputDiv.innerHTML = "<h2>Truth Table</h2>";
-            outputDiv.innerHTML += createTableFromData(data);
-        }
+    // Function to create an HTML table from the received data
+    function createTableFromData(data) {
+        const rows = data.split('\n').filter(Boolean);
+        let tableHTML = "<table><tr>";
 
-        // Function to create an HTML table from the received data
-        function createTableFromData(data) {
-            const rows = data.split('\n').filter(Boolean);
-            let tableHTML = "<table><tr>";
-            
-            // Extract headers from the first row
-            const headers = rows[0].split(' ');
-            
-            // Create header cells
-            headers.forEach(header => {
-                if (header !== "Result") {
-                    tableHTML += `<th>${header}</th>`;
-                } else {
-                    tableHTML += `<th colspan="${rows[0].split(' ').length - 1}">${header}</th>`;
-                }
-            });
-            
-            // Close header row
-            tableHTML += "</tr><tr>";
-            
-            // Create data rows
-            for (let i = 1; i < rows.length; i++) {
-                const cells = rows[i].split(' ');
-                cells.forEach(cell => {
-                    tableHTML += `<td>${cell}</td>`;
-                });
-                tableHTML += "</tr><tr>";
+        // Extract headers from the first row
+        const headers = rows[0].split(' ');
+
+        // Create header cells
+        headers.forEach(header => {
+            if (header !== "Result") {
+                tableHTML += `<th>${header}</th>`;
+            } else {
+                tableHTML += `<th colspan="${rows[0].split(' ').length - 1}">${header}</th>`;
             }
-            
-            // Close table
-            tableHTML += "</tr></table>";
-            
-            return tableHTML;
+        });
+
+        // Close header row
+        tableHTML += "</tr><tr>";
+
+        // Create data rows
+        for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].split(' ');
+            cells.forEach(cell => {
+                tableHTML += `<td>${cell}</td>`;
+            });
+            tableHTML += "</tr><tr>";
         }
-        // Function to send a message to the server
-        function sendMessage() {
-            const messageInput = document.getElementById("messageInput");
-            const message = messageInput.value;
-            socket.send(message);
-            messageInput.value = "";
-        }
+
+        // Close table
+        tableHTML += "</tr></table>";
+
+        return tableHTML;
+    }
+
+    // WebSocket event handlers
+    socket.onopen = function() {
+        console.log("WebSocket connection established.");
+    };
+
+    socket.onmessage = function(event) {
+        const data = event.data;
+        updateUI(data);
+    };
     </script>
 </body>
 </html>
