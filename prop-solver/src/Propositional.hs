@@ -13,7 +13,18 @@ module Propositional
     , NDTree(..)
     , exampleProofTree
     , printNDTree
+    , parseExpr,
+    parseConst,
+    parseVar,
+    parseNot,
+    parseAnd,
+    parseOr,
+    parseImply,
+    parseProp
     ) where
+
+import Text.Parsec
+import Text.Parsec.String (Parser)
 
 data Prop = Const Bool
           | Var Char
@@ -78,16 +89,15 @@ substs p = map (zip vs) (bools (length vs))
 isTaut :: Prop -> Bool
 isTaut p = and [eval s p | s <- substs p]
 
-createTruthTable :: Prop -> IO ()
-createTruthTable prop = do
-  let variables = rmdups (vars prop)
-  let header =  variables ++ "\t" ++ "Result"
-  let substitutions = substs prop
-  let table = [(map (\var -> if find var s then 'T' else 'F') variables, eval s prop) | s <- substitutions]
-  
-  putStrLn header
-  mapM_ (\(vars', result) -> putStrLn (vars' ++ "\t" ++ if result then "T" else "F")) table
-
+createTruthTable :: Prop -> String
+createTruthTable prop = unlines $
+  header : map formatTableRow table
+  where
+    variables = rmdups (vars prop)
+    header =  unwords (map (:[]) variables) ++ "\tResult"
+    substitutions = substs prop
+    table = [(map (\var -> if find var s then 'T' else 'F') variables, eval s prop) | s <- substitutions]
+    formatTableRow (vars', result) = unwords (map (:[]) vars' ++ if result then ["T"] else ["F"])
 
 -- Define the data type for natural deduction trees
 data NDTree = Assumption Prop
@@ -109,3 +119,54 @@ printNDTree tree = printNDTreeHelper 0 tree
         putStrLn $ replicate indent ' ' ++ "Rule: " ++ ruleName
         mapM_ (printNDTreeHelper (indent + 2)) premises
         putStrLn $ replicate indent ' ' ++ "Conclusion: " ++ show conclusion
+
+
+parseExpr :: Parser Prop
+parseExpr = parseConst <|> parseVar <|> parseNot <|> parseAnd <|> parseOr <|> parseImply
+
+parseConst :: Parser Prop
+parseConst = do
+    b <- (string "True" >> return True) <|> (string "False" >> return False)
+    return (Const b)
+
+parseVar :: Parser Prop
+parseVar = do
+    string "Var '"
+    letter <- letter
+    char '\''
+    return (Var letter)
+
+parseNot :: Parser Prop
+parseNot = do
+    string "Not"
+    Not <$> parseExpr
+
+parseAnd :: Parser Prop
+parseAnd = do
+    string "And"
+    spaces
+    a <- parseExpr
+    spaces
+    And a <$> parseExpr
+
+parseOr :: Parser Prop
+parseOr = do
+    string "Or"
+    spaces
+    a <- parseExpr
+    spaces
+    Or a <$> parseExpr
+
+parseImply :: Parser Prop
+parseImply = do
+    string "Imply"
+    spaces
+    a <- parseExpr
+    spaces
+    Imply a <$> parseExpr
+
+-- Define the function to parse a string into a Prop value
+parseProp :: String -> Maybe Prop
+parseProp input = case parse parseExpr "" input of
+    Left _     -> Nothing
+    Right prop -> Just prop

@@ -12,6 +12,8 @@ import Propositional
 import Cnf
 import Functions
 
+
+
 main :: IO ()
 main = do
     putStrLn "WebSocket server started"
@@ -21,12 +23,17 @@ application :: ServerApp
 application pending = do
     conn <- acceptRequest pending
     putStrLn "Client connected"
-    sendTextData conn (encodeUtf8 $ T.pack "Welcome to the Propositional Logic Solver!")
-    sendTextData conn (encodeUtf8 $ T.pack "Here are some example propositions:")
-    sendTextData conn (encodeUtf8 $ T.pack (show p1))
-    sendTextData conn (encodeUtf8 $ T.pack (show p2))
     forever $ do
-        msg <- receiveData conn
-        putStrLn $ "Received message: " ++ show (msg :: T.Text)
-        -- Process the message received from the client and send a response
-        sendTextData conn (encodeUtf8 $ T.pack ("Received: " <> T.unpack msg))
+        -- Receive expression from client
+        message <- receiveData conn
+        let expression = T.unpack message  -- Convert Text to String
+        putStrLn $ "Received expression from client: " ++ expression
+        -- Parse the expression
+        let result = createTruthTable <$> parseProp expression
+        case result of
+            Just table -> do
+                -- Send result back to client
+                sendTextData conn (encodeUtf8 $ T.pack table)
+                putStrLn "Sent table"
+            Nothing -> putStrLn "Failed to parse expression"
+

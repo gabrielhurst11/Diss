@@ -16,26 +16,30 @@
     <input type="text" id="messageInput" placeholder="Type a message...">
     <button onclick="sendMessage()">Send</button>
 
+    <div id="output"></div>
+
     <script>
+        // Connect to the WebSocket server
         const socket = new WebSocket('ws://localhost:8080');
 
-        socket.onopen = function(event) {
-            console.log('WebSocket connection established');
-        };
-
+        // Function to handle messages received from the server
         socket.onmessage = function(event) {
-            const messagesDiv = document.getElementById('messages');
-            const messageDiv = document.createElement('div');
-            messageDiv.textContent = event.data;
-            messagesDiv.appendChild(messageDiv);
+            const data = event.data;
+            updateUI(data);
         };
 
-        function sendMessage() {
-            const inputElement = document.getElementById('messageInput');
-            const message = inputElement.value;
-            socket.send(message);
-            inputElement.value = '';
+        // Function to update the UI with the received data
+        function updateUI(data) {
+            const outputDiv = document.getElementById("output");
+            outputDiv.innerHTML = "<h2>Truth Table</h2>";
+            outputDiv.innerHTML += "<pre>" + data + "</pre>";
         }
+
+        // Send an expression to the server when the connection is established
+        socket.onopen = function() {
+            const expression = 'And Var \'B\' Var \'C\'';
+            socket.send(expression);
+        };
     </script>
 </body>
 </html>
