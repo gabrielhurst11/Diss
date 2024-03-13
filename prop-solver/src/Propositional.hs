@@ -94,7 +94,7 @@ createTruthTable prop = unlines $
   header : map formatTableRow table
   where
     variables = rmdups (vars prop)
-    header =  unwords (map (:[]) variables) ++ "\tResult"
+    header =  unwords (map (:[]) variables) ++ "\t Result"
     substitutions = substs prop
     table = [(map (\var -> if find var s then 'T' else 'F') variables, eval s prop) | s <- substitutions]
     formatTableRow (vars', result) = unwords (map (:[]) vars' ++ if result then ["T"] else ["F"])
