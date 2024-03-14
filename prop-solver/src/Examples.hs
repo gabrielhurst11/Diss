@@ -22,7 +22,6 @@ p4 = Imply (And (Var 'A') (Imply (Var 'A') (Var 'B'))) (Var 'B')
 -- (A and B implies B and C)
 p5 :: Prop
 p5 = Imply (And (Var 'A') (Var 'B')) (And (Var 'B') (Var 'C'))
-
 -- A or B
 p6 :: Prop
 p6 = Or (Var 'A') (Var 'B')

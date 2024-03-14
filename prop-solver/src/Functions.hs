@@ -41,18 +41,21 @@ conjInt :: Prop -> Prop -> Prop
 conjInt x y = And x y
 
 -- Removes conjunction Left 
-conjElimL :: Prop -> Prop
-conjElimL (And p q) = p 
+conjElimL :: Prop -> Maybe Prop
+conjElimL (And p q) =Just p 
+conjElimL _ = Nothing
 
 -- Removes conjunction Right
-conjElimR :: Prop -> Prop
-conjElimR (And p q) = q
+conjElimR :: Prop -> Maybe Prop
+conjElimR (And p q) = Just q
+conjElimR _ = Nothing
 
 -- If implication known q returned
 impElim :: Prop -> Prop -> Maybe Prop
 impElim (Imply p q) y
     | p == y = Just q
     | otherwise = Nothing
+impElim _ _ = Nothing
 
 -- Introduces disjunction on the left
 disjIntL :: Prop -> Prop
