@@ -3,95 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket Client</title>
-    <style>
-        #messages {
-            overflow-y: scroll;
-            height: 200px;
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: center;
-            padding: 8px;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
+    <title>Logic Solver</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> <!-- Include Bootstrap CSS -->
 </head>
 <body>
     <div id="messages"></div>
-    <input type="text" id="expressionInput" placeholder="Type a message...">
-    <button onclick="sendProposition()">Submit</button>
+    <div class="container mt-4"> <!-- Bootstrap container class for spacing -->
+        <div class="input-group mb-3"> <!-- Bootstrap input group class -->
+            <input type="text" id="expressionInput" class="form-control" placeholder="Enter a Proposition"> <!-- Bootstrap form control class -->
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" onclick="appendToInput('P ')">P</button> <!-- Bootstrap button styling -->
+                <button class="btn btn-outline-secondary" type="button" onclick="appendToInput('Q ')">Q</button>
+                <button class="btn btn-outline-secondary" type="button" onclick="appendToInput('R ')">R</button>
+                <button class="btn btn-outline-secondary" type="button" onclick="appendToInput('And ')">And</button>
+                <button class="btn btn-outline-secondary" type="button" onclick="appendToInput('Or ')">Or</button>
+                <button class="btn btn-outline-secondary" type="button" onclick="appendToInput('Not ')">Not</button>
+                <button class="btn btn-outline-secondary" type="button" onclick="appendToInput('Implies')">Imply</button>
+                <button class="btn btn-outline-secondary" type="button"onclick="appendToInput('(')"> ( </button>
+                <button class="btn btn-outline-secondary" type="button"onclick="appendToInput(')')"> ) </button>  
+                <button class="btn btn-outline-secondary" type="button" onclick="clearInput()">Clear</button>
+                <button class="btn btn-outline-secondary" type="button" onclick="sendProposition()">Submit</button>
+            </div>
+        </div>
+    </div>
 
     <div id="output"></div>
 
-    <script>
-    // Connect to the WebSocket server
-    const socket = new WebSocket('ws://localhost:8080');
-
-    // Function to send a proposition to the server
-    function sendProposition() {
-        console.log("Button clicked"); // Check if the function is called
-        const expression = document.getElementById('expressionInput').value;
-        socket.send(expression);
-    }
-
-    // Function to update the UI with the received data
-    function updateUI(data) {
-        const outputDiv = document.getElementById("output");
-        outputDiv.innerHTML = "<h2>Truth Table</h2>";
-        outputDiv.innerHTML += createTableFromData(data);
-    }
-
-    // Function to create an HTML table from the received data
-    function createTableFromData(data) {
-        const rows = data.split('\n').filter(Boolean);
-        let tableHTML = "<table><tr>";
-
-        // Extract headers from the first row
-        const headers = rows[0].split(' ');
-
-        // Create header cells
-        headers.forEach(header => {
-            if (header !== "Result") {
-                tableHTML += `<th>${header}</th>`;
-            } else {
-                tableHTML += `<th colspan="${rows[0].split(' ').length - 1}">${header}</th>`;
-            }
-        });
-
-        // Close header row
-        tableHTML += "</tr><tr>";
-
-        // Create data rows
-        for (let i = 1; i < rows.length; i++) {
-            const cells = rows[i].split(' ');
-            cells.forEach(cell => {
-                tableHTML += `<td>${cell}</td>`;
-            });
-            tableHTML += "</tr><tr>";
-        }
-
-        // Close table
-        tableHTML += "</tr></table>";
-
-        return tableHTML;
-    }
-
-    // WebSocket event handlers
-    socket.onopen = function() {
-        console.log("WebSocket connection established.");
-    };
-
-    socket.onmessage = function(event) {
-        const data = event.data;
-        updateUI(data);
-    };
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
