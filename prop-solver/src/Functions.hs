@@ -10,6 +10,7 @@ module Functions
     , impElim
     , disjIntL
     , disjIntR
+    , impInt
     ) where
 
 import Propositional (Prop(..))
@@ -42,12 +43,12 @@ conjInt x y = And x y
 
 -- Removes conjunction Left 
 conjElimL :: Prop -> Maybe Prop
-conjElimL (And p q) =Just p 
+conjElimL (And p _) =Just p 
 conjElimL _ = Nothing
 
 -- Removes conjunction Right
 conjElimR :: Prop -> Maybe Prop
-conjElimR (And p q) = Just q
+conjElimR (And _ q) = Just q
 conjElimR _ = Nothing
 
 -- If implication known q returned
@@ -64,3 +65,6 @@ disjIntL p = Or p q where q = Var 'Z'
 -- Introduces disjunction on the right
 disjIntR :: Prop -> Prop
 disjIntR p = Or q p where q = Var 'Z'
+
+impInt :: Prop -> Prop -> Prop
+impInt p q = Imply p q
