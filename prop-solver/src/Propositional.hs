@@ -105,10 +105,13 @@ data NDTree = Assumption Prop
 
 
 exampleProofTree :: NDTree
-exampleProofTree = Rule "Final Rule" [stepB, stepC] (Var 'l')
-  where
-    stepB = Rule "Some Rule" [Assumption (Var 'a')] (Var 'b')
-    stepC = Rule "Another Rule" [Assumption (Var 'b')] (Var 'c')
+exampleProofTree = Rule "Implication Introduction" [step1, step2, step3, step4] (Imply (And (Var 'P') (Var 'Q')) (And (Var 'Q') (Var 'P')))
+    where
+        step1 = Assumption (And (Var 'P') (Var 'Q'))
+        step2 = Rule "Conjunction Elimination" [Assumption (And (Var 'P') (Var 'Q'))] (Var 'P')
+        step3 = Rule "Conjunction Elimination" [ Assumption (And (Var 'P') (Var 'Q'))] (Var 'Q')
+        step4 = Rule "Conjunction Introduction" [Assumption (Var 'P')] (And (Var 'Q') (Var 'P'))
+
 
 -- Function to convert NDTree to a string representation with indentation
 printNDTree :: NDTree -> IO ()
