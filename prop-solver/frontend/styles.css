@@ -17,3 +17,16 @@ th, td {
 th {
     background-color: #f2f2f2;
 }
+
+.banner {
+    background-color: #333; /* Dark background color */
+    color: #fff; /* Text color */
+    padding: 10px; /* Padding for the content */
+    text-align: center; /* Center align the content */
+}
+
+.banner a {
+    color: #fff; /* Link color */
+    text-decoration: none; /* Remove underline from links */
+    margin: 0 10px; /* Add spacing between links */
+}
