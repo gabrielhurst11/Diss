@@ -29,6 +29,7 @@ library
       Examples
       Functions
       Lib
+      Parser
       Propositional
   other-modules:
       Paths_prop_solver

@@ -15,10 +15,17 @@
             <li><a href="resolution.html" class="nav-link px-2">Resolution</a></li>
           </ul>
         </header>
+    </div>
+    <div class="container mt-5">
+      <div class="form-group">
+          <label for="theoremInput">Enter a propositional theorem:</label>
+          <input type="text" class="form-control" id="theoremInput" placeholder="(A AND B) IMPLIES (B AND A)">
       </div>
-    
-    <div id="output"></div>
+      <button onclick="applyStep()">Apply Step</button>
+    </div>
 
+    <div id="output" class="container mt-5"></div>
+    
     <script src="script.js"></script>
 </body>
 </html>

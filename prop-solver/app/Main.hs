@@ -11,6 +11,7 @@ import Examples
 import Propositional
 import Cnf
 import Functions
+import Parser
 
 
 
@@ -37,3 +38,30 @@ application pending = do
                 putStrLn "Sent table"
             Nothing -> putStrLn "Failed to parse expression"
 
+
+{-
+application :: ServerApp
+application pending = do
+    conn <- acceptRequest pending
+    putStrLn "Client connected"
+    forever $ do
+        -- Receive message from client
+        message <- receiveData conn
+        let request = T.unpack message  -- Convert Text to String
+        putStrLn $ "Received request from client: " ++ request
+        -- Parse the request and process accordingly
+        case parseRequest request of
+            Just (ResolutionRequest expr step) -> do
+                -- Apply resolution step and send result back to client
+                let result = applyResolutionStep expr step
+                sendTextData conn (encodeUtf8 $ T.pack result)
+                putStrLn "Sent resolution result"
+            Just (TruthTableRequest expr) -> do
+                -- Generate truth table and send result back to client
+                let result = createTruthTable expr
+                sendTextData conn (encodeUtf8 $ T.pack result)
+                putStrLn "Sent truth table"
+            Nothing -> putStrLn "Failed to parse request"
+
+parseRequest :: String -> String
+-}
