@@ -13,13 +13,32 @@ import Cnf
 import Functions
 import Parser
 
+-- Define a data type to represent different types of requests
+data RequestType = TruthTableRequest String  -- Request for truth table generation
+             | ResolutionRequest String  -- Request for resolution step application
 
+instance Show RequestType where
+    show (TruthTableRequest expr) = "TruthTableRequest " ++ expr
+    show (ResolutionRequest stepExpr) = "ResolutionRequest " ++ stepExpr
+
+-- Define a function to handle different types of requests
+handleRequest :: RequestType -> Maybe String
+handleRequest (TruthTableRequest expr) = createTruthTable <$> parseProp expr
+handleRequest (ResolutionRequest exprStep) = applyResolutionStep exprStep
+
+parseRequest :: String -> Maybe RequestType
+parseRequest str
+    | not (null str) && head str == 't' = Just (TruthTableRequest (drop 1 str))
+    | not (null str) && head str == 'r' = Just (ResolutionRequest (drop 1 str))
+    | otherwise = Nothing
 
 main :: IO ()
 main = do
     putStrLn "WebSocket server started"
     runServer "127.0.0.1" 8080 application
 
+
+{-
 application :: ServerApp
 application pending = do
     conn <- acceptRequest pending
@@ -37,31 +56,24 @@ application pending = do
                 sendTextData conn (encodeUtf8 $ T.pack table)
                 putStrLn "Sent table"
             Nothing -> putStrLn "Failed to parse expression"
+-}
 
 
-{-
 application :: ServerApp
 application pending = do
     conn <- acceptRequest pending
     putStrLn "Client connected"
     forever $ do
-        -- Receive message from client
+        -- Receive request from client
         message <- receiveData conn
-        let request = T.unpack message  -- Convert Text to String
-        putStrLn $ "Received request from client: " ++ request
-        -- Parse the request and process accordingly
-        case parseRequest request of
-            Just (ResolutionRequest expr step) -> do
-                -- Apply resolution step and send result back to client
-                let result = applyResolutionStep expr step
-                sendTextData conn (encodeUtf8 $ T.pack result)
-                putStrLn "Sent resolution result"
-            Just (TruthTableRequest expr) -> do
-                -- Generate truth table and send result back to client
-                let result = createTruthTable expr
-                sendTextData conn (encodeUtf8 $ T.pack result)
-                putStrLn "Sent truth table"
-            Nothing -> putStrLn "Failed to parse request"
-
-parseRequest :: String -> String
--}
+        let expression = T.unpack message  -- Convert Text to String
+        putStrLn $ "Received expression from client: " ++ expression
+        let request = parseRequest expression
+        -- Process the request
+        let response = case request of
+                Just req -> handleRequest req
+                Nothing -> Just "Invalid request"
+        -- Send response back to client
+        case response of
+            Just res -> sendTextData conn (encodeUtf8 $ T.pack res)
+            Nothing -> putStrLn "Failed to process request"

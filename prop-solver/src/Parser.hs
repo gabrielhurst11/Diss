@@ -6,13 +6,15 @@ module Parser(
     parseAnd,
     parseOr,
     parseImply,
-    parseProp
+    parseProp,
+    applyResolutionStep
 ) where
 
 
 import Text.Parsec
 import Text.Parsec.String (Parser)
 import Propositional (Prop(..))
+import Functions
 
 parseExpr :: Parser Prop
 parseExpr = parseConst <|> parseVar <|> parseNot <|> parseAnd <|> parseOr <|> parseImply
@@ -63,3 +65,20 @@ parseProp :: String -> Maybe Prop
 parseProp input = case parse parseExpr "" input of
     Left _     -> Nothing
     Right prop -> Just prop
+
+
+-- Define a function to apply a resolution step
+applyResolutionStep :: String -> Maybe String
+applyResolutionStep exprStep = case words exprStep of
+    ["conjElimL", expr] -> case parseProp expr of
+        Just prop -> case conjElimL prop of
+            Just result -> Just (show result)
+            Nothing -> Just "Resolution step failed: conjunction elimination (left) couldn't be applied"
+        Nothing -> Just "Invalid expression"
+    ["conjElimR", expr] -> case parseProp expr of
+        Just prop -> case conjElimR prop of
+            Just result -> Just (show result)
+            Nothing -> Just "Resolution step failed: conjunction elimination (right) couldn't be applied"
+        Nothing -> Just "Invalid expression"
+    -- Add more cases for other resolution steps as needed
+    _ -> Just "Invalid resolution step"
