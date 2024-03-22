@@ -64,15 +64,16 @@ socket.onmessage = function(event) {
 };
 
 // Function to send a proposition to the server
-function sendProposition() {
+function sendProposition(requestType) {
     const expression = document.getElementById('expressionInput').value;
-    const parsedExpression = parseExpression(expression);
+    console.log(requestType);
+    const parsedExpression = parseExpression(expression, requestType);
     console.log(parsedExpression);
     socket.send(parsedExpression);
 }
 
 // Function to parse the expression and convert it into the desired format
-function parseExpression(expression) {
+function parseExpression(expression, requestType) {
     // Helper function to remove spaces from both ends of a string
     const trim = (str) => str.trim();
 
@@ -97,6 +98,9 @@ function parseExpression(expression) {
         // Otherwise, assume it's a variable and return it wrapped with 'Var'
         return `Var '${token}'`;
     });
+
+    // Prepend the string value of requestType to the expression
+    mappedTokens.unshift(requestType);
 
     // Join the mapped tokens with spaces to form the final expression
     return mappedTokens.join(' ');
