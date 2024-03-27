@@ -24,7 +24,7 @@ instance Show RequestType where
 -- Define a function to handle different types of requests
 handleRequest :: RequestType -> Maybe String
 handleRequest (TruthTableRequest expr) = createTruthTable <$> parseProp expr
-handleRequest (ResolutionRequest exprStep) = applyResolutionStep exprStep
+handleRequest (ResolutionRequest exprStep) = show <$> applyResolutionStep exprStep
 
 parseRequest :: String -> Maybe RequestType
 parseRequest str
@@ -34,6 +34,7 @@ parseRequest str
 
 parseExpressionRequest :: (String -> RequestType) -> String -> Maybe RequestType
 parseExpressionRequest constructor expr = Just $ constructor expr
+
 main :: IO ()
 main = do
     putStrLn "WebSocket server started"

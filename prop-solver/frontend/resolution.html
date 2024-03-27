@@ -16,15 +16,32 @@
           </ul>
         </header>
     </div>
-    <div class="container mt-5">
-      <div class="form-group">
-          <label for="theoremInput">Enter a propositional theorem:</label>
-          <input type="text" class="form-control" id="theoremInput" placeholder="(A AND B) IMPLIES (B AND A)">
+    <div class="container mt-4"> 
+      <div class="input-group mb-3"> 
+          <input type="text" id="expressionInput" class="form-control" placeholder="Enter a Proposition">
+          <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="button" onclick="appendToInput('P ')">P</button> 
+              <button class="btn btn-outline-secondary" type="button" onclick="appendToInput('Q ')">Q</button>
+              <button class="btn btn-outline-secondary" type="button" onclick="appendToInput('R ')">R</button>
+              <button class="btn btn-outline-secondary" type="button" onclick="appendToInput('And ')">And</button>
+              <button class="btn btn-outline-secondary" type="button" onclick="appendToInput('Or ')">Or</button>
+              <button class="btn btn-outline-secondary" type="button" onclick="appendToInput('Not ')">Not</button>
+              <button class="btn btn-outline-secondary" type="button" onclick="appendToInput('Implies ')">Imply</button>
+              <button class="btn btn-outline-secondary" type="button" onclick="appendToInput('(')"> ( </button>
+              <button class="btn btn-outline-secondary" type="button" onclick="appendToInput(')')"> ) </button>  
+              <button class="btn btn-outline-secondary" type="button" onclick="clearInput()">Clear</button>
+              <button class="btn btn-outline-secondary" type="button" onclick="sendProposition('r 1')">Submit</button>
+          </div>
       </div>
-      <button onclick="applyStep()">Apply Step</button>
-    </div>
+  </div>
 
     <div id="output" class="container mt-5"></div>
+
+    <!-- Add buttons for conjElimL and conjElimR -->
+    <div class="container mt-3">
+        <button class="btn btn-primary mr-2" onclick="sendProposition('r 1')">Conjunction Elimination (L)</button>
+        <button class="btn btn-primary" onclick="sendProposition('r 2')">Conjunction Elimination (R)</button>
+    </div>
     
     <script src="script.js"></script>
 </body>

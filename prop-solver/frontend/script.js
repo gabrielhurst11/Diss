@@ -1,5 +1,7 @@
 // Connect to the WebSocket server
 const socket = new WebSocket('ws://localhost:8080');
+var currentRequest = "Table";
+let currentProposition;
 
 function appendToInput(text) {
     var input = document.getElementById("expressionInput");
@@ -13,8 +15,19 @@ function clearInput() {
 // Function to update the UI with the received data
 function updateUI(data) {
     const outputDiv = document.getElementById("output");
-    outputDiv.innerHTML = "<h2>Truth Table</h2>";
-    outputDiv.innerHTML += createTableFromData(data);
+    if (currentRequest == "Table"){
+        outputDiv.innerHTML = "<h2>Truth Table</h2>";
+        outputDiv.innerHTML += createTableFromData(data);
+    }
+    else if (currentRequest == "Resolution"){
+        displayResult(data);
+    }
+}
+
+// Function to display the result on the page
+function displayResult(result) {
+    const outputDiv = document.getElementById('output');
+    outputDiv.innerHTML = '<h5>Result:</h5><p>' + result + '</p>';
 }
 
 // Function to create an HTML table from the received data
@@ -63,15 +76,28 @@ socket.onmessage = function(event) {
     updateUI(data);
 };
 
-// Function to send a proposition to the server
 function sendProposition(requestType) {
     const expression = document.getElementById('expressionInput').value;
     console.log(requestType);
+    if (requestType === 't'){
+        currentRequest = "Table";
+    }
+    else{
+        currentRequest = "Resolution";
+    }
+    console.log(currentRequest);
+    
+    // Save the proposition to the currentProposition variable
+    currentProposition = expression;
+    
+    // Display the proposition on the page
+    document.getElementById('output').innerText = currentProposition;
+    
+    // Send the proposition to the server
     const parsedExpression = parseExpression(expression, requestType);
     console.log(parsedExpression);
     socket.send(parsedExpression);
 }
-
 // Function to parse the expression and convert it into the desired format
 function parseExpression(expression, requestType) {
     // Helper function to remove spaces from both ends of a string

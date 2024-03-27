@@ -67,18 +67,13 @@ parseProp input = case parse parseExpr "" input of
     Right prop -> Just prop
 
 
--- Define a function to apply a resolution step
-applyResolutionStep :: String -> Maybe String
-applyResolutionStep exprStep = case words exprStep of
-    ["conjElimL", expr] -> case parseProp expr of
-        Just prop -> case conjElimL prop of
-            Just result -> Just (show result)
-            Nothing -> Just "Resolution step failed: conjunction elimination (left) couldn't be applied"
-        Nothing -> Just "Invalid expression"
-    ["conjElimR", expr] -> case parseProp expr of
-        Just prop -> case conjElimR prop of
-            Just result -> Just (show result)
-            Nothing -> Just "Resolution step failed: conjunction elimination (right) couldn't be applied"
-        Nothing -> Just "Invalid expression"
-    -- Add more cases for other resolution steps as needed
-    _ -> Just "Invalid resolution step"
+applyResolutionStep :: String -> Maybe Prop
+applyResolutionStep [] = Nothing
+applyResolutionStep (x:y:xs)
+    | x == '1' = case parseProp xs of
+                    Just prop -> conjElimL prop
+                    Nothing -> Nothing
+    | x == '2' = case parseProp xs of
+                    Just prop -> conjElimR prop
+                    Nothing -> Nothing
+    | otherwise = Nothing
