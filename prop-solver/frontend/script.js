@@ -78,15 +78,12 @@ socket.onmessage = function(event) {
 
 function sendProposition(requestType) {
     const expression = document.getElementById('expressionInput').value;
-    console.log(requestType);
     if (requestType === 't'){
         currentRequest = "Table";
     }
     else{
         currentRequest = "Resolution";
-    }
-    console.log(currentRequest);
-    
+    }    
     // Save the proposition to the currentProposition variable
     currentProposition = expression;
     
@@ -100,6 +97,7 @@ function sendProposition(requestType) {
 }
 // Function to parse the expression and convert it into the desired format
 function parseExpression(expression, requestType) {
+    console.log(expression);
     // Helper function to remove spaces from both ends of a string
     const trim = (str) => str.trim();
 
@@ -117,8 +115,8 @@ function parseExpression(expression, requestType) {
 
     // Map each token to its corresponding representation
     const mappedTokens = tokens.map(token => {
-        // If the token is 'AND', 'OR', 'NOT', or 'IMPLIES', return the uppercase version
-        if (['AND', 'OR', 'NOT', 'IMPLIES'].includes(token.toUpperCase())) {
+        // If the token is 'AND', 'OR', 'NOT', or 'IMPLY', return the uppercase version
+        if (['AND', 'OR', 'NOT', 'IMPLY'].includes(token.toUpperCase())) {
             return token;
         }
         // Otherwise, assume it's a variable and return it wrapped with 'Var'
