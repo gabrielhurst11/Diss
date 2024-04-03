@@ -30,3 +30,11 @@ th {
     text-decoration: none; /* Remove underline from links */
     margin: 0 10px; /* Add spacing between links */
 }
+.toolbar {
+    margin-top: 10px; /* Add margin to separate it from the input box */
+}
+@media (max-width: 767px) {
+    .toolbar {
+        margin-top: 20px; /* Adjust margin for smaller screens if needed */
+    }
+}
