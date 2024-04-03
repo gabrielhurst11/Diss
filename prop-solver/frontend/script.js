@@ -3,6 +3,40 @@ const socket = new WebSocket('ws://localhost:8080');
 var currentRequest = "Table";
 let currentProposition;
 
+// Variable to keep track of the steps
+let steps = [];
+
+function clearSteps(){
+    steps = [];
+    displaySteps();
+}
+function createSteps(){
+    clearSteps();
+    const expression = document.getElementById('expressionInput').value.trim();
+
+    // Save the proposition as a step
+    steps.push(expression);
+
+    // Display steps as numbered list
+    displaySteps();
+}
+
+function displaySteps(){
+    const outputDiv = document.getElementById('output');
+    outputDiv.innerHTML = '';
+
+    const stepsList = document.createElement('ol');
+
+    // Loop through steps and create list items
+    steps.forEach((step, index) => {
+        const stepItem = document.createElement('li');
+        stepItem.textContent = `${step}`;
+        stepsList.appendChild(stepItem);
+    });
+
+    outputDiv.appendChild(stepsList);
+}
+
 function appendToInput(text) {
     var input = document.getElementById("expressionInput");
     input.value += text;

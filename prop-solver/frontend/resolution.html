@@ -30,25 +30,26 @@
               <button class="btn btn-outline-secondary" type="button" onclick="appendToInput('Imply ')">Imply</button>
               <button class="btn btn-outline-secondary" type="button" onclick="appendToInput('(')"> ( </button>
               <button class="btn btn-outline-secondary" type="button" onclick="appendToInput(')')"> ) </button>  
-              <button class="btn btn-outline-secondary" type="button" onclick="clearInput()">Clear</button>
-              <button class="btn btn-outline-secondary" type="button" onclick="sendProposition('r 1')">Submit</button>
+              <button class="btn btn-outline-secondary" type="button" onclick="clearInput(); clearSteps()">Clear</button>
+              <button class="btn btn-outline-secondary" type="button" onclick="createSteps()">Submit</button>
           </div>
       </div>
   </div>
 
-    <div id="output" class="container mt-5"></div>
 
 
-    <div class="container mt-4" style="padding-right: 15px;">
-        <div class="d-flex justify-content-end"> 
-            <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
-                <button class="btn btn-outline-secondary" onclick="sendProposition('r 4')"> Assumption</button>
-                <button class="btn btn-outline-secondary" onclick="sendProposition('r 1')">Conjunction Elimination (L)</button>
-                <button class="btn btn-outline-secondary" onclick="sendProposition('r 2')">Conjunction Elimination (R)</button>
-                <button class="btn btn-outline-secondary" onclick="sendProposition('r 3')"> Implication Introduction</button>
-            </div>
+    <div class="container mt-4 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center"> 
+        <div class="steps-container mb-3 mb-md-0">
+            <h5>Steps:</h5>
+            <div id="output" class="steps-list"></div>
         </div>
-    </div>>
+
+        <!-- Add buttons for conjElimL and conjElimR -->
+        <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+            <button class="btn btn-outline-secondary mb-2" onclick="sendProposition('r 1')">Conjunction Elimination (L)</button>
+            <button class="btn btn-outline-secondary" onclick="sendProposition('r 2')">Conjunction Elimination (R)</button>
+        </div>
+    </div>
     </div>
     
     
