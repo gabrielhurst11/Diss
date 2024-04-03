@@ -2,9 +2,9 @@ name:                prop-solver
 version:             0.1.0.0
 github:              "githubuser/prop-solver"
 license:             BSD-3-Clause
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2024 Author name here"
+author:              "Gabriel Hurst"
+maintainer:          "gabrielhurst11@gmail.com"
+copyright:           "2024 Gabriel Hurst"
 
 extra-source-files:
 - README.md
