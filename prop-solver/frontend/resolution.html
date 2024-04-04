@@ -44,10 +44,9 @@
             <div id="output" class="steps-list"></div>
         </div>
 
-        <!-- Add buttons for conjElimL and conjElimR -->
         <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
-            <button class="btn btn-outline-secondary" onclick="sendProposition('r 1')">Assumption</button>
-            <button class="btn btn-outline-secondary" onclick="sendProposition('r 1')">Conjunction Elimination (L)</button>
+            <button class="btn btn-outline-secondary" onclick="openInputBox('Assumption')">Assumption</button>
+            <button class="btn btn-outline-secondary" onclick="openInputBox('Conjunction Elimination (L)')">Conjunction Elimination (L)</button>
             <button class="btn btn-outline-secondary" onclick="sendProposition('r 2')">Conjunction Elimination (R)</button>
             <button class="btn btn-outline-secondary" onclick="sendProposition('r 2')">Conjunction Introduction</button>
             <button class="btn btn-outline-secondary" onclick="sendProposition('r 2')">Implication Introduction</button>
@@ -55,7 +54,54 @@
     </div>
     </div>
 
-    
+    <!-- Assumption Modal -->
+    <div class="modal fade" id="inputModal" tabindex="-1" role="dialog" aria-labelledby="inputModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="inputModalLabel">Enter Proposition</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+            <input type="text" id="propositionInput" class="form-control" placeholder="Enter Proposition">
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="sendProposition()">Send</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Conjunction Modal -->
+    <div class="modal fade" id="conjModal" tabindex="-1" role="dialog" aria-labelledby="conjModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="conjModalLabel">Pick Proposition</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+            <input type="text" id="propositionChoice" class="form-control" placeholder="Choose Proposition">
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="sendProposition()">Send</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
     <script src="script.js"></script>
 </body>
 </html>

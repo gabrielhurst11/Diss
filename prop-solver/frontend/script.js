@@ -163,3 +163,16 @@ function parseExpression(expression, requestType) {
     // Join the mapped tokens with spaces to form the final expression
     return mappedTokens.join(' ');
 }
+
+function openInputBox(title) {
+    if (title == 'Assumption'){
+        $('#inputModalLabel').text('Enter Proposition for ' + title);
+        $('#propositionInput').val('');
+        $('#inputModal').modal('show');
+    }
+    else if (title == 'Conjunction Elimination (L)'){
+        $('#conjModalLabel').text('Choose Proposition for ' + title);
+        $('#propositionChoice').val('');
+        $('#conjModal').modal('show');
+    }
+  }
