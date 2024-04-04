@@ -47,7 +47,7 @@
         <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
             <button class="btn btn-outline-secondary" onclick="openInputBox('Assumption')">Assumption</button>
             <button class="btn btn-outline-secondary" onclick="openInputBox('Conjunction Elimination (L)')">Conjunction Elimination (L)</button>
-            <button class="btn btn-outline-secondary" onclick="sendProposition('r 2')">Conjunction Elimination (R)</button>
+            <button class="btn btn-outline-secondary" onclick="openInputBox('Conjunction Elimination (R)')">Conjunction Elimination (R)</button>
             <button class="btn btn-outline-secondary" onclick="sendProposition('r 2')">Conjunction Introduction</button>
             <button class="btn btn-outline-secondary" onclick="sendProposition('r 2')">Implication Introduction</button>
         </div>
@@ -91,7 +91,7 @@
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" onclick="sendResolution('r 1')">Send</button>
+            <button type="button" class="btn btn-primary" onclick="sendResolution()">Send</button>
             </div>
         </div>
         </div>

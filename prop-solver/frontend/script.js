@@ -199,10 +199,16 @@ function openInputBox(title) {
         $('#propositionInput').val('');
         $('#inputModal').modal('show');
     }
-    else if (title == 'Conjunction Elimination (L)'){
+    else if (title == 'Conjunction Elimination (L)' || title == 'Conjunction Elimination (R)'){
         $('#conjModalLabel').text('Choose Proposition for ' + title);
         $('#propositionChoice').val('');
         populateDropdown();
+        var button = document.querySelector('#conjModal .modal-footer button.btn-primary');
+        if (title === "Conjunction Elimination (L)") {
+            button.setAttribute("onclick", "sendResolution('r 1')");
+        } else if (title === "Conjunction Elimination (R)") {
+            button.setAttribute("onclick", "sendResolution('r 2')");
+        }
         $('#conjModal').modal('show');
     }
   }
