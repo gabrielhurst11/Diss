@@ -69,7 +69,7 @@
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" onclick="sendProposition()">Send</button>
+            <button type="button" class="btn btn-primary" onclick="addAssum()">Send</button>
             </div>
         </div>
         </div>
@@ -86,11 +86,12 @@
             </button>
             </div>
             <div class="modal-body">
-            <input type="text" id="propositionChoice" class="form-control" placeholder="Choose Proposition">
+                <select id="stepDropdown" class="form-control">
+                </select>
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" onclick="sendProposition()">Send</button>
+            <button type="button" class="btn btn-primary" onclick="sendResolution('r 1')">Send</button>
             </div>
         </div>
         </div>

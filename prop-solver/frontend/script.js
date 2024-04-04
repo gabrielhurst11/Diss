@@ -21,6 +21,19 @@ function createSteps(){
     displaySteps();
 }
 
+function addAssum(){
+    const expression = document.getElementById('propositionInput').value.trim();
+
+    steps.push(expression);
+
+    displaySteps();
+}
+
+function addStep(step){
+    steps.push(step);
+    displaySteps();
+}
+
 function displaySteps(){
     const outputDiv = document.getElementById('output');
     outputDiv.innerHTML = '';
@@ -54,7 +67,7 @@ function updateUI(data) {
         outputDiv.innerHTML += createTableFromData(data);
     }
     else if (currentRequest == "Resolution"){
-        displayResult(data);
+        addStep(data);
     }
 }
 
@@ -129,6 +142,22 @@ function sendProposition(requestType) {
     console.log(parsedExpression);
     socket.send(parsedExpression);
 }
+function sendResolution(requestType) {
+    const expressionIndex = document.getElementById('stepDropdown').value;
+    var expression = steps[expressionIndex];
+    currentRequest = "Resolution";   
+    // Save the proposition to the currentProposition variable
+    currentProposition = expression;
+    
+    // Display the proposition on the page
+    document.getElementById('output').innerText = currentProposition;
+    
+    // Send the proposition to the server
+    const parsedExpression = parseExpression(expression, requestType);
+    console.log(parsedExpression);
+    socket.send(parsedExpression);
+}
+
 // Function to parse the expression and convert it into the desired format
 function parseExpression(expression, requestType) {
     console.log(expression);
@@ -173,6 +202,19 @@ function openInputBox(title) {
     else if (title == 'Conjunction Elimination (L)'){
         $('#conjModalLabel').text('Choose Proposition for ' + title);
         $('#propositionChoice').val('');
+        populateDropdown();
         $('#conjModal').modal('show');
     }
   }
+
+function populateDropdown() {
+    var dropdown = document.getElementById("stepDropdown");
+    dropdown.innerHTML = ""; // Clear previous options
+
+    for (var i = 0; i < steps.length; i++) {
+        var option = document.createElement("option");
+        option.text = "Step " + (i + 1) + ": " + steps[i];
+        option.value = i;
+        dropdown.appendChild(option);
+    }
+}
