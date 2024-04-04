@@ -38,8 +38,8 @@ negation :: Prop -> Prop
 negation p = Not p
 
 -- Returns conjunction if 2 values are known
-conjInt :: Prop -> Prop -> Prop
-conjInt x y = And x y
+conjInt :: Prop -> Prop -> Maybe Prop
+conjInt x y = Just (And x y)
 
 -- Removes conjunction Left 
 conjElimL :: Prop -> Maybe Prop

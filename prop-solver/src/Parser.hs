@@ -7,6 +7,7 @@ module Parser(
     parseOr,
     parseImply,
     parseProp,
+    splitOnComma,
     applyResolutionStep
 ) where
 
@@ -66,6 +67,11 @@ parseProp input = case parse parseExpr "" input of
     Left _     -> Nothing
     Right prop -> Just prop
 
+splitOnComma :: String -> Maybe (String, String)
+splitOnComma str =
+    case break (== ',') str of
+        (part1, ',':' ':part2) -> Just (part1, part2)
+        _ -> Nothing
 
 applyResolutionStep :: String -> Maybe Prop
 applyResolutionStep [] = Nothing
@@ -75,5 +81,15 @@ applyResolutionStep (x:y:xs)
                     Nothing -> Nothing
     | x == '2' = case parseProp xs of
                     Just prop -> conjElimR prop
+                    Nothing -> Nothing
+    | x == '3' = case splitOnComma xs of
+                    Just (prop1, prop2) -> do
+                        case parseProp prop1 of
+                            Just prop11 -> do
+                                case parseProp prop2 of
+                                    Just prop22 -> conjInt prop11 prop22
+                                    Nothing -> Nothing
+                            Nothing -> Nothing
+
                     Nothing -> Nothing
     | otherwise = Nothing
