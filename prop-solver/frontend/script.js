@@ -157,6 +157,23 @@ function sendResolution(requestType) {
     console.log(parsedExpression);
     socket.send(parsedExpression);
 }
+function sendIntroduction(requestType) {
+    const expressionIndex1 = document.getElementById('stepDropdown1').value;
+    var expression1 = steps[expressionIndex1];
+    const expressionIndex2 = document.getElementById('stepDropdown2').value;
+    var expression2 = steps[expressionIndex2];
+    currentRequest = "Resolution";   
+    // Save the propositions to the currentProposition variable
+    currentProposition = expression1 + " , " + expression2;
+    
+    // Display the proposition on the page
+    document.getElementById('output').innerText = currentProposition;
+    
+    // Send the proposition to the server
+    const parsedExpression = parseExpression(currentProposition, requestType);
+    console.log(parsedExpression);
+    socket.send(parsedExpression);
+}
 
 // Function to parse the expression and convert it into the desired format
 function parseExpression(expression, requestType) {
@@ -181,6 +198,9 @@ function parseExpression(expression, requestType) {
         // If the token is 'AND', 'OR', 'NOT', or 'IMPLY', return the uppercase version
         if (['AND', 'OR', 'NOT', 'IMPLY'].includes(token.toUpperCase())) {
             return token;
+        }
+        if (token == ','){
+            return ','
         }
         // Otherwise, assume it's a variable and return it wrapped with 'Var'
         return `Var '${token}'`;
@@ -211,6 +231,16 @@ function openInputBox(title) {
         }
         $('#conjModal').modal('show');
     }
+    else if (title == 'Conjunction Introduction'){
+        $('#intModalLabel').text('Enter Propositions for ' + title);
+        $('#propositionChoice').val('');
+        populateDropdown2();
+        var button = document.querySelector('#intModal .modal-footer button.btn-primary');
+        if (title === "Conjunction Introduction") {
+            button.setAttribute("onclick", "sendIntroduction('r 3')");
+        }
+        $('#intModal').modal('show');
+    }
   }
 
 function populateDropdown() {
@@ -222,5 +252,22 @@ function populateDropdown() {
         option.text = "Step " + (i + 1) + ": " + steps[i];
         option.value = i;
         dropdown.appendChild(option);
+    }
+}
+function populateDropdown2() {
+    var dropdown1 = document.getElementById("stepDropdown1");
+    var dropdown2 = document.getElementById("stepDropdown2");
+    dropdown1.innerHTML = ""; // Clear previous options
+    dropdown2.innerHTML = ""; // Clear previous options
+    for (var i = 0; i < steps.length; i++) {
+        var option1 = document.createElement("option");
+        option1.text = "Step " + (i + 1) + ": " + steps[i];
+        option1.value = i;
+        dropdown1.appendChild(option1);
+
+        var option2 = document.createElement("option");
+        option2.text = "Step " + (i + 1) + ": " + steps[i];
+        option2.value = i;
+        dropdown2.appendChild(option2);
     }
 }
