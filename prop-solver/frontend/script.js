@@ -271,3 +271,64 @@ function populateDropdown2() {
         dropdown2.appendChild(option2);
     }
 }
+
+
+function parseProp(prop){
+    let stack = [];
+    let queue = [];
+    let expr = "";
+    let operators = ['And', 'Or', 'Implies']
+    const tokens = prop.split(' ')
+    let operator = ""
+    let startIndex = -1;
+    for (let i = 0; i < tokens.length; i++){
+        if (tokens[i] == '('){
+            if (startIndex == -1){
+                startIndex = i;
+            }
+            for (let j = i; j < tokens.length; j++){
+                if (tokens[j]== '('){
+                    stack.push(j);
+                }
+                if (tokens[j] == ')'){
+                    if (stack.length == 0){
+                        console.log("Unmatched )")
+                        return null;
+                    }
+                    stack.pop();
+                    if (stack.length == 0){
+                        
+                        let endIndex = i;
+                        let expressionWithinBrackets = tokens.slice(startIndex + 1,j).join(' ');
+                        queue.push(parseProp(expressionWithinBrackets));
+                        i +=j;
+                    }
+                }
+            }
+        }else if (operators.includes(tokens[i])){
+            operator = tokens[i];
+        }else{
+            queue.push(tokens[i]);
+        }
+
+    }
+    let finalProp = "";
+    console.log(queue);
+    if (queue.length == 1){
+        finalProp = queue.shift();
+        return finalProp;
+    }
+    finalProp = operator + " " + queue.shift() + " " + queue.shift();
+
+    return finalProp;
+
+    console.log(finalProp);
+}
+    
+
+
+
+const inputString = "( ( A And B ) Or C )";
+const extractedExpression = parseProp(inputString);
+console.log(extractedExpression);
+
