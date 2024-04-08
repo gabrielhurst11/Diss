@@ -39,7 +39,8 @@ library
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.7 && <5
+      HUnit
+    , base >=4.7 && <5
     , parsec
     , text
     , websockets
@@ -55,7 +56,8 @@ executable prop-solver-exe
       app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      HUnit
+    , base >=4.7 && <5
     , parsec
     , prop-solver
     , text
@@ -66,6 +68,7 @@ test-suite prop-solver-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      TestFunctions
       Paths_prop_solver
   autogen-modules:
       Paths_prop_solver
@@ -73,7 +76,8 @@ test-suite prop-solver-test
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      HUnit
+    , base >=4.7 && <5
     , parsec
     , prop-solver
     , text
