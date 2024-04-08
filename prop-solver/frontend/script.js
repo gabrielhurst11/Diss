@@ -276,7 +276,6 @@ function populateDropdown2() {
 function parseProp(prop){
     let stack = [];
     let queue = [];
-    let expr = "";
     let operators = ['And', 'Or', 'Implies']
     const tokens = prop.split(' ')
     let operator = ""
@@ -289,6 +288,9 @@ function parseProp(prop){
             for (let j = i; j < tokens.length; j++){
                 if (tokens[j]== '('){
                     stack.push(j);
+                    if (stack.length == 1){
+                        startIndex = j
+                    } 
                 }
                 if (tokens[j] == ')'){
                     if (stack.length == 0){
@@ -298,10 +300,10 @@ function parseProp(prop){
                     stack.pop();
                     if (stack.length == 0){
                         
-                        let endIndex = i;
                         let expressionWithinBrackets = tokens.slice(startIndex + 1,j).join(' ');
+                        console.log(expressionWithinBrackets);
                         queue.push(parseProp(expressionWithinBrackets));
-                        i +=j;
+                        i = j;
                     }
                 }
             }
@@ -313,7 +315,6 @@ function parseProp(prop){
 
     }
     let finalProp = "";
-    console.log(queue);
     if (queue.length == 1){
         finalProp = queue.shift();
         return finalProp;
@@ -321,14 +322,10 @@ function parseProp(prop){
     finalProp = operator + " " + queue.shift() + " " + queue.shift();
 
     return finalProp;
-
-    console.log(finalProp);
 }
     
 
-
-
-const inputString = "( ( A And B ) Or C )";
+const inputString = "( ( A And B ) Or ( B And A ) )";
 const extractedExpression = parseProp(inputString);
 console.log(extractedExpression);
 
