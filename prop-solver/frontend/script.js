@@ -272,7 +272,6 @@ function populateDropdown2() {
     }
 }
 
-
 function parseProp(prop){
     let stack = [];
     let queue = [];
@@ -280,52 +279,47 @@ function parseProp(prop){
     const tokens = prop.split(' ')
     let operator = ""
     let startIndex = -1;
+    console.log(tokens);
     for (let i = 0; i < tokens.length; i++){
+      console.log("Current token is " + tokens[i] + " at index " + i)
         if (tokens[i] == '('){
-            if (startIndex == -1){
-                startIndex = i;
-            }
-            for (let j = i; j < tokens.length; j++){
+            startIndex = i;
+            for (let j = i+1; j < tokens.length; j++){
                 if (tokens[j]== '('){
-                    stack.push(j);
-                    if (stack.length == 1){
-                        startIndex = j
-                    } 
-                }
-                if (tokens[j] == ')'){
-                    if (stack.length == 0){
-                        console.log("Unmatched )")
-                        return null;
-                    }
-                    stack.pop();
-                    if (stack.length == 0){
-                        
+                    stack.push(tokens[j]);
+                } else if (tokens[j] === ')'){
+                    if (stack.length === 0){ //have found our matching closing bracket at j
                         let expressionWithinBrackets = tokens.slice(startIndex + 1,j).join(' ');
                         console.log(expressionWithinBrackets);
                         queue.push(parseProp(expressionWithinBrackets));
                         i = j;
+                        j = tokens.length; //break the loop
                     }
+                    stack.pop();
                 }
             }
         }else if (operators.includes(tokens[i])){
+            console.log("setting operator to be " + tokens[i])
             operator = tokens[i];
         }else{
             queue.push(tokens[i]);
         }
 
     }
+    console.log("parsing is done, with queue looking like" + queue + " and operator " + operator)
     let finalProp = "";
     if (queue.length == 1){
         finalProp = queue.shift();
         return finalProp;
     }
     finalProp = operator + " " + queue.shift() + " " + queue.shift();
-
+    console.log("final prop is " + finalProp)
     return finalProp;
 }
+
     
 
-const inputString = "( ( A And B ) Or ( B And A ) )";
+const inputString = "( ( A And B ) Implies B )";
 const extractedExpression = parseProp(inputString);
 console.log(extractedExpression);
 
