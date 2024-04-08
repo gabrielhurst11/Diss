@@ -157,6 +157,7 @@ function sendResolution(requestType) {
     console.log(parsedExpression);
     socket.send(parsedExpression);
 }
+
 function sendIntroduction(requestType) {
     const expressionIndex1 = document.getElementById('stepDropdown1').value;
     var expression1 = steps[expressionIndex1];
@@ -165,18 +166,22 @@ function sendIntroduction(requestType) {
     currentRequest = "Resolution";   
     // Save the propositions to the currentProposition variable
     currentProposition = expression1 + " , " + expression2;
+    currentProp1 = parseExpression(expression1, requestType);
+    currentProp2 = parseExpression(expression2, "");
+    console.log(currentProp2);
+    currentProp3 = currentProp1 + " ," + currentProp2;
+    console.log(currentProp3);
     
-    // Display the proposition on the page
-    document.getElementById('output').innerText = currentProposition;
     
     // Send the proposition to the server
     const parsedExpression = parseExpression(currentProposition, requestType);
     console.log(parsedExpression);
-    socket.send(parsedExpression);
+    socket.send(currentProp3);
 }
 
 // Function to parse the expression and convert it into the desired format
 function parseExpression(expression, requestType) {
+    expression = parseProp(expression);
     console.log(expression);
     // Helper function to remove spaces from both ends of a string
     const trim = (str) => str.trim();
@@ -279,9 +284,7 @@ function parseProp(prop){
     const tokens = prop.split(' ')
     let operator = ""
     let startIndex = -1;
-    console.log(tokens);
     for (let i = 0; i < tokens.length; i++){
-      console.log("Current token is " + tokens[i] + " at index " + i)
         if (tokens[i] == '('){
             startIndex = i;
             for (let j = i+1; j < tokens.length; j++){
@@ -299,27 +302,24 @@ function parseProp(prop){
                 }
             }
         }else if (operators.includes(tokens[i])){
-            console.log("setting operator to be " + tokens[i])
             operator = tokens[i];
         }else{
             queue.push(tokens[i]);
         }
 
     }
-    console.log("parsing is done, with queue looking like" + queue + " and operator " + operator)
     let finalProp = "";
     if (queue.length == 1){
         finalProp = queue.shift();
         return finalProp;
     }
     finalProp = operator + " " + queue.shift() + " " + queue.shift();
-    console.log("final prop is " + finalProp)
     return finalProp;
 }
 
     
 
-const inputString = "( ( A And B ) Implies B )";
-const extractedExpression = parseProp(inputString);
+const inputString = "A And B";
+const extractedExpression = parseExpression(inputString, "");
 console.log(extractedExpression);
 
