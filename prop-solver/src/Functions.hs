@@ -59,12 +59,12 @@ impElim (Imply p q) y
 impElim _ _ = Nothing
 
 -- Introduces disjunction on the left
-disjIntL :: Prop -> Prop
-disjIntL p = Or p q where q = Var 'Z'
+disjIntL :: Prop -> Prop -> Maybe Prop
+disjIntL p q = Just (Or p q) 
 
 -- Introduces disjunction on the right
-disjIntR :: Prop -> Prop
-disjIntR p = Or q p where q = Var 'Z'
+disjIntR :: Prop -> Prop -> Maybe Prop
+disjIntR p q = Just (Or q p)
 
 impInt :: Prop -> Prop -> Prop
 impInt p q = Imply p q
