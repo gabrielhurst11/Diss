@@ -5,7 +5,7 @@
 
 table {
     border-collapse: collapse;
-    width: 100%;
+    width: 75%;
 }
 
 th, td {
@@ -37,4 +37,8 @@ th {
     .toolbar {
         margin-top: 20px; /* Adjust margin for smaller screens if needed */
     }
+}
+
+.table-wrapper {
+    padding: 10%; /* Adjust padding as needed */
 }

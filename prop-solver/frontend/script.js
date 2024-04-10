@@ -63,7 +63,6 @@ function clearInput() {
 function updateUI(data) {
     const outputDiv = document.getElementById("output");
     if (currentRequest == "Table"){
-        outputDiv.innerHTML = "<h2>Truth Table</h2>";
         outputDiv.innerHTML += createTableFromData(data);
     }
     else if (currentRequest == "Resolution"){
@@ -80,7 +79,7 @@ function displayResult(result) {
 // Function to create an HTML table from the received data
 function createTableFromData(data) {
     const rows = data.split('\n').filter(Boolean);
-    let tableHTML = `<table class="table table-bordered table-striped"><thead><tr>`;
+    let tableHTML = `<div class="table-wrapper"><table class="table table-bordered table-striped"><thead><tr>`;
 
     // Extract headers from the first row
     const headers = rows[0].split(' ');
@@ -134,8 +133,6 @@ function sendProposition(requestType) {
     // Save the proposition to the currentProposition variable
     currentProposition = expression;
     
-    // Display the proposition on the page
-    document.getElementById('output').innerText = currentProposition;
     
     // Send the proposition to the server
     const parsedExpression = parseExpression(expression, requestType);
