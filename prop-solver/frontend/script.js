@@ -284,6 +284,7 @@ function parseProp(prop){
     const tokens = prop.split(' ')
     let operator = ""
     let startIndex = -1;
+    let negateNext = false;
     for (let i = 0; i < tokens.length; i++){
         if (tokens[i] == '('){
             startIndex = i;
@@ -294,7 +295,12 @@ function parseProp(prop){
                     if (stack.length === 0){ //have found our matching closing bracket at j
                         let expressionWithinBrackets = tokens.slice(startIndex + 1,j).join(' ');
                         console.log(expressionWithinBrackets);
-                        queue.push(parseProp(expressionWithinBrackets));
+                        let token = parseProp(expressionWithinBrackets);
+                        if (negateNext === true){
+                            token = "Not " + token
+                            negateNext = false;
+                        }
+                        queue.push(token);
                         i = j;
                         j = tokens.length; //break the loop
                     }
@@ -303,8 +309,17 @@ function parseProp(prop){
             }
         }else if (operators.includes(tokens[i])){
             operator = tokens[i];
-        }else{
-            queue.push(tokens[i]);
+        }else if (tokens[i] === "Not"){
+            console.log("Negation Found")
+            negateNext = true;
+        }
+        else{
+            let token = tokens[i];
+            if (negateNext === true){
+                token = "Not "+ token
+                negateNext = false;
+            }
+            queue.push(token);
         }
 
     }
@@ -319,7 +334,7 @@ function parseProp(prop){
 
     
 
-const inputString = "A And B";
-const extractedExpression = parseExpression(inputString, "");
+const inputString = "Not ( B Or C )";
+const extractedExpression = parseExpression(inputString);
 console.log(extractedExpression);
 
