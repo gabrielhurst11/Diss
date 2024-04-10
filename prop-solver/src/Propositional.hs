@@ -29,7 +29,7 @@ instance Show Prop where
     show (Var x) = [x]
     show (Not p) = "Not ( " ++ show p ++ " )"
     show (And p q) = "( " ++ show p ++ " And " ++ show q ++ " ) "
-    show (Imply a b) = "( " ++ show a ++ " -> " ++ show b ++ " ) "
+    show (Imply a b) = "( " ++ show a ++ " Imply " ++ show b ++ " ) "
     show (Or a b) = " ( " ++ show a ++ " Or " ++ show b ++ " ) "
 
 -- Need to know value of variables - associates variables to logical values

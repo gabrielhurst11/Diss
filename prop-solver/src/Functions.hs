@@ -66,5 +66,5 @@ disjIntL p q = Just (Or p q)
 disjIntR :: Prop -> Prop -> Maybe Prop
 disjIntR p q = Just (Or q p)
 
-impInt :: Prop -> Prop -> Prop
-impInt p q = Imply p q
+impInt :: Prop -> Prop -> Maybe Prop
+impInt p q = Just (Imply p q)

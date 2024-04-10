@@ -229,13 +229,16 @@ function openInputBox(title) {
         }
         $('#conjModal').modal('show');
     }
-    else if (title == 'Conjunction Introduction'){
+    else if (title == 'Conjunction Introduction' || title == 'Implication Introduction'){
         $('#intModalLabel').text('Enter Propositions for ' + title);
         $('#propositionChoice').val('');
         populateDropdown2();
         var button = document.querySelector('#intModal .modal-footer button.btn-primary');
         if (title === "Conjunction Introduction") {
             button.setAttribute("onclick", "sendIntroduction('r 3')");
+        }
+        if (title === "Implication Introduction"){
+            button.setAttribute("onclick", "sendIntroduction('r 4')")
         }
         $('#intModal').modal('show');
     }
