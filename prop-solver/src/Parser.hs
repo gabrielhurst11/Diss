@@ -35,6 +35,7 @@ parseVar = do
 parseNot :: Parser Prop
 parseNot = do
     string "Not"
+    spaces
     Not <$> parseExpr
 
 parseAnd :: Parser Prop
