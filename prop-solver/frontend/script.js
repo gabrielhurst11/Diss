@@ -63,6 +63,7 @@ function clearInput() {
 function updateUI(data) {
     const outputDiv = document.getElementById("output");
     if (currentRequest == "Table"){
+        outputDiv.innerHTML = ''; //Clear current Table
         outputDiv.innerHTML += createTableFromData(data);
     }
     else if (currentRequest == "Resolution"){
@@ -70,11 +71,6 @@ function updateUI(data) {
     }
 }
 
-// Function to display the result on the page
-function displayResult(result) {
-    const outputDiv = document.getElementById('output');
-    outputDiv.innerHTML = '<h5>Result:</h5><p>' + result + '</p>';
-}
 
 // Function to create an HTML table from the received data
 function createTableFromData(data) {
@@ -277,7 +273,7 @@ function populateDropdown2() {
 function parseProp(prop){
     let stack = [];
     let queue = [];
-    let operators = ['And', 'Or', 'Implies']
+    let operators = ['And', 'Or', 'Imply']
     const tokens = prop.split(' ')
     let operator = ""
     let startIndex = -1;
@@ -328,10 +324,4 @@ function parseProp(prop){
     finalProp = operator + " " + queue.shift() + " " + queue.shift();
     return finalProp;
 }
-
-    
-
-const inputString = "Not ( B Or C )";
-const extractedExpression = parseExpression(inputString);
-console.log(extractedExpression);
 
