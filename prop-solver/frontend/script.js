@@ -154,28 +154,28 @@ function sendResolution(requestType) {
 function sendIntroduction(requestType) {
     const expressionIndex1 = document.getElementById('stepDropdown1').value;
     var expression1 = steps[expressionIndex1];
-    const expressionIndex2 = document.getElementById('stepDropdown2').value;
-    var expression2 = steps[expressionIndex2];
+    if (requestType === 'r 5'){
+        var expression2 = document.getElementById('disjInput').value;
+    }
+    else{
+        const expressionIndex2 = document.getElementById('stepDropdown2').value;
+        var expression2 = steps[expressionIndex2];
+    }
     currentRequest = "Resolution";   
     // Save the propositions to the currentProposition variable
     currentProposition = expression1 + " , " + expression2;
     currentProp1 = parseExpression(expression1, requestType);
     currentProp2 = parseExpression(expression2, "");
-    console.log(currentProp2);
     currentProp3 = currentProp1 + " ," + currentProp2;
+
     console.log(currentProp3);
     
-    
-    // Send the proposition to the server
-    const parsedExpression = parseExpression(currentProposition, requestType);
-    console.log(parsedExpression);
     socket.send(currentProp3);
 }
 
 // Function to parse the expression and convert it into the desired format
 function parseExpression(expression, requestType) {
     expression = parseProp(expression);
-    console.log(expression);
     // Helper function to remove spaces from both ends of a string
     const trim = (str) => str.trim();
 
@@ -242,10 +242,32 @@ function openInputBox(title) {
         }
         $('#intModal').modal('show');
     }
+    else if (title == 'Disjunction Introduction'){
+        $('#disjModalLabel').text('Choose Proposition for ' + title);
+        $('#conjInput').val('');
+        populateDropdown3();
+        var button = document.querySelector('#disjModal .modal-footer button.btn-primary');
+        if (title === "Disjunction Introduction") {
+            button.setAttribute("onclick", "sendIntroduction('r 5')");
+        }
+        $('#disjModal').modal('show');
+
+    }
   }
 
 function populateDropdown() {
     var dropdown = document.getElementById("stepDropdown");
+    dropdown.innerHTML = ""; // Clear previous options
+
+    for (var i = 0; i < steps.length; i++) {
+        var option = document.createElement("option");
+        option.text = "Step " + (i + 1) + ": " + steps[i];
+        option.value = i;
+        dropdown.appendChild(option);
+    }
+}
+function populateDropdown3() {
+    var dropdown = document.getElementById("stepDropdown3");
     dropdown.innerHTML = ""; // Clear previous options
 
     for (var i = 0; i < steps.length; i++) {
@@ -290,7 +312,6 @@ function parseProp(prop){
                 } else if (tokens[j] === ')'){
                     if (stack.length === 0){ //have found our matching closing bracket at j
                         let expressionWithinBrackets = tokens.slice(startIndex + 1,j).join(' ');
-                        console.log(expressionWithinBrackets);
                         let token = parseProp(expressionWithinBrackets);
                         if (negateNext === true){
                             token = "Not " + token
@@ -306,7 +327,6 @@ function parseProp(prop){
         }else if (operators.includes(tokens[i])){
             operator = tokens[i];
         }else if (tokens[i] === "Not"){
-            console.log("Negation Found")
             negateNext = true;
         }
         else{

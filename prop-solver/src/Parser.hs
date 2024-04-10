@@ -103,4 +103,14 @@ applyResolutionStep (x:y:xs)
                             Nothing -> Nothing
 
                     Nothing -> Nothing
+    | x == '5' = case splitOnComma xs of
+                    Just (prop1, prop2) -> do
+                        case parseProp prop1 of
+                            Just prop11 -> do
+                                case parseProp prop2 of
+                                    Just prop22 -> disjIntL prop11 prop22
+                                    Nothing -> Nothing
+                            Nothing -> Nothing
+
+                    Nothing -> Nothing
     | otherwise = Nothing

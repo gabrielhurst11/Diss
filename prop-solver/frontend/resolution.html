@@ -50,6 +50,7 @@
             <button class="btn btn-outline-secondary" onclick="openInputBox('Conjunction Elimination (R)')">Conjunction Elimination (R)</button>
             <button class="btn btn-outline-secondary" onclick="openInputBox('Conjunction Introduction')">Conjunction Introduction</button>
             <button class="btn btn-outline-secondary" onclick="openInputBox('Implication Introduction')">Implication Introduction</button>
+            <button class="btn btn-outline-secondary" onclick="openInputBox('Disjunction Introduction')">Disjunction Introduction</button>
         </div>
     </div>
     </div>
@@ -112,6 +113,28 @@
                 </select>
                 <select id="stepDropdown2" class="form-control">
                 </select>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="sendIntroduction()">Send</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    <!-- Disjunction Modal -->
+    <div class="modal fade" id="disjModal" tabindex="-1" role="dialog" aria-labelledby="disjModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="disjModalLabel">Pick Proposition</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <select id="stepDropdown3" class="form-control">
+                </select>
+                <input type="text" id="disjInput" class="form-control" placeholder="Enter Proposition">
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
