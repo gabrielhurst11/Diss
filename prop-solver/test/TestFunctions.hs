@@ -5,69 +5,70 @@ import Functions
 import Propositional (Prop(..))
 
 -- Define expected value
-expectedValue :: Prop
-expectedValue = Not (Var 'A')
+notA :: Prop
+notA = Not (Var 'A')
 
-expectedValue2 :: Prop
-expectedValue2 = Not (And (Var 'A') (Var 'B'))
+notAAndB :: Prop
+notAAndB = Not (And (Var 'A') (Var 'B'))
 
-testValue2 :: Prop
-testValue2 = Imply (Var 'A') (Var 'B')
+aImpliesB :: Prop
+aImpliesB = Imply (Var 'A') (Var 'B')
 
-testValue3 :: Prop
-testValue3 = Or (Var 'B') (Var 'A')
+bOrA :: Prop
+bOrA = Or (Var 'B') (Var 'A')
 
-expectedValue3 :: Prop
-expectedValue3 = And (Var 'A') (Var 'B')
+aAndB :: Prop
+aAndB = And (Var 'A') (Var 'B')
 
-expectedValue4 :: Prop
-expectedValue4 = Var 'A'
+varA :: Prop
+varA = Var 'A'
 
-testValue1 :: Prop
-testValue1 = Or (Var 'A') (Var 'B')
+varB :: Prop
+varB = Var 'B'
 
-testValue1 :: Prop
-testValue1 = Or (Var 'A') (Var 'B')
+aOrB:: Prop
+aOrB = Or (Var 'A') (Var 'B')
+
 
 -- Test cases
 negation1 :: Test
-negation1 = TestCase (assertEqual "Negation Test 1" (negation (Var 'A')) expectedValue)
+negation1 = TestCase (assertEqual "Negation Test 1" (negation (Var 'A')) notA)
 
 negation2 :: Test
-negation2 = TestCase (assertEqual "Negation Test 2" (negation (And (Var 'A') (Var 'B'))) expectedValue2)
+negation2 = TestCase (assertEqual "Negation Test 2" (negation (And (Var 'A') (Var 'B'))) notAAndB)
 
 conjInt1 :: Test
-conjInt1 = TestCase (assertEqual "Conjunction Introduction Test 1" (conjInt (Var 'A') (Var 'B')) (Just expectedValue3))
+conjInt1 = TestCase (assertEqual "Conjunction Introduction Test 1" (conjInt (Var 'A') (Var 'B')) (Just aAndB))
 
 conjElimL1 :: Test
-conjElimL1 = TestCase (assertEqual "Conjunction Elimination Test 1" (conjElimL expectedValue3) (Just expectedValue4))
+conjElimL1 = TestCase (assertEqual "Conjunction Elimination Test 1" (conjElimL aAndB) (Just varA))
 
 conjElimL2 :: Test
-conjElimL2 = TestCase (assertEqual "Conjunction Elimination Test 2" (conjElimL testValue1) (Nothing))
+conjElimL2 = TestCase (assertEqual "Conjunction Elimination Test 2" (conjElimL aOrB) (Nothing))
 
 conjElimR1 :: Test
-conjElimR1 = TestCase (assertEqual "Conjunction Elimination Test 3" (conjElimR expectedValue3) (Just expectedValue5))
+conjElimR1 = TestCase (assertEqual "Conjunction Elimination Test 3" (conjElimR aAndB) (Just varB))
 
 conjElimR2 :: Test
-conjElimR2 = TestCase (assertEqual "Conjunction Elimination Test 3" (conjElimR testValue2) (Nothing))
+conjElimR2 = TestCase (assertEqual "Conjunction Elimination Test 3" (conjElimR aImpliesB) (Nothing))
 
 impElim1 :: Test
-impElim1 = TestCase (assertEqual "Implication Elimination Test 1" (impElim testValue2 expectedValue4) (Just expectedValue5))
+impElim1 = TestCase (assertEqual "Implication Elimination Test 1" (impElim aImpliesB varA) (Just varB))
 
 impElim2 :: Test
-impElim2 = TestCase (assertEqual "Implication Elimination Test 2" (impElim testValue2 expectedValue5) (Nothing))
+impElim2 = TestCase (assertEqual "Implication Elimination Test 2" (impElim aImpliesB varB) (Nothing))
 
 impElim3 :: Test
-impElim3 = TestCase (assertEqual "Implication Elimination Test 3" (impElim testValue1 expectedValue5) (Nothing))
+impElim3 = TestCase (assertEqual "Implication Elimination Test 3" (impElim aOrB varB) (Nothing))
 
 disjIntL1 :: Test
-disjIntL1 = TestCase (assertEqual "Disjunction Introduction Test 1" (disjIntL expectedValue4 expectedValue5) (Just testValue1))
+disjIntL1 = TestCase (assertEqual "Disjunction Introduction Test 1" (disjIntL varA varB) (Just aOrB))
 
 disjIntR1 :: Test
-disjIntR1 = TestCase (assertEqual "Disjunction Introduction Test 2" (disjIntL expectedValue5 expectedValue4) (Just testValue3))
+disjIntR1 = TestCase (assertEqual "Disjunction Introduction Test 2" (disjIntR varA varB) (Just bOrA))
 
 impInt1 :: Test
-impInt1 = TestCase (assertEqual "Implication Introduction Test 1" (impInt expectedValue4 expectedValue5) (testValue2))
+impInt1 = TestCase (assertEqual "Implication Introduction Test 1" (impInt varA varB) (Just aImpliesB))
 
 -- Test list
 tests :: Test
