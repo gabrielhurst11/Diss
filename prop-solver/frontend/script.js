@@ -154,10 +154,14 @@ function sendResolution(requestType) {
 function sendIntroduction(requestType) {
     const expressionIndex1 = document.getElementById('stepDropdown1').value;
     var expression1 = steps[expressionIndex1];
-    if (requestType === 'r 5'){
+    if (requestType === 'r 5' || requestType === 'r 6'){
+        const expressionIndex1 = document.getElementById('stepDropdown3').value;
+        var expression1 = steps[expressionIndex1];
         var expression2 = document.getElementById('disjInput').value;
     }
     else{
+        const expressionIndex1 = document.getElementById('stepDropdown1').value;
+        var expression1 = steps[expressionIndex1];
         const expressionIndex2 = document.getElementById('stepDropdown2').value;
         var expression2 = steps[expressionIndex2];
     }
@@ -242,13 +246,16 @@ function openInputBox(title) {
         }
         $('#intModal').modal('show');
     }
-    else if (title == 'Disjunction Introduction'){
+    else if (title === 'Disjunction Introduction (L)' || title === "Disjunction Introduction (R)"){
         $('#disjModalLabel').text('Choose Proposition for ' + title);
         $('#conjInput').val('');
         populateDropdown3();
         var button = document.querySelector('#disjModal .modal-footer button.btn-primary');
-        if (title === "Disjunction Introduction") {
+        if (title === "Disjunction Introduction (L)") {
             button.setAttribute("onclick", "sendIntroduction('r 5')");
+        }
+        else if (title === "Disjunction Introduction (R)") {
+            button.setAttribute("onclick","sendIntroduction('r 6')" );
         }
         $('#disjModal').modal('show');
 
@@ -296,6 +303,7 @@ function populateDropdown2() {
 }
 
 function parseProp(prop){
+    console.log(prop);
     let stack = [];
     let queue = [];
     let operators = ['And', 'Or', 'Imply']
