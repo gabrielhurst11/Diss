@@ -27,6 +27,7 @@ function addAssum(){
     steps.push(expression);
 
     displaySteps();
+    $('#inputModal').modal('hide');
 }
 
 function addStep(step){
@@ -149,6 +150,7 @@ function sendResolution(requestType) {
     const parsedExpression = parseExpression(expression, requestType);
     console.log(parsedExpression);
     socket.send(parsedExpression);
+    $('#conjModal').modal('hide');
 }
 
 function sendIntroduction(requestType) {
@@ -175,6 +177,9 @@ function sendIntroduction(requestType) {
     console.log(currentProp3);
     
     socket.send(currentProp3);
+
+    $('#intModal').modal('hide');
+    $('#disjModal').modal('hide');
 }
 
 // Function to parse the expression and convert it into the desired format
