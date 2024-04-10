@@ -28,12 +28,14 @@ antecedent = Var 'A'
 consequent :: Prop
 consequent = Var 'B'
 
--- Define a function to apply Modus Ponens
-modusPonens :: Prop -> Prop -> Prop -> Maybe Prop
-modusPonens con ant csq
-    | con == Imply ant csq = Just csq
+
+-- Implication Elimination (Modus Ponens)
+modusPonens :: Prop -> Prop -> Maybe Prop
+modusPonens (Imply p q) r
+    | p == r = Just q
     | otherwise = Nothing
 
+    
 -- Negation function
 negation :: Prop -> Prop
 negation p = Not p
