@@ -11,6 +11,7 @@ module Functions
     , disjIntL
     , disjIntR
     , impInt
+    , deMorganLaw
     ) where
 
 import Propositional (Prop(..))
@@ -68,3 +69,19 @@ disjIntR p q = Just (Or q p)
 
 impInt :: Prop -> Prop -> Maybe Prop
 impInt p q = Just (Imply p q)
+
+deMorganLaw :: Prop -> Prop
+deMorganLaw (Not (And p q)) = Or (Not p1) (Not q1)
+    where
+        p1 = (deMorganLaw p)
+        q1 = (deMorganLaw q)
+deMorganLaw (Not (Or p q)) = And (Not p2) (Not q2)
+    where
+        p2 = (deMorganLaw p)
+        q2 = (deMorganLaw q)
+deMorganLaw (And p q) = And (deMorganLaw p) (deMorganLaw q)
+deMorganLaw (Or p q) = Or (deMorganLaw p) (deMorganLaw q)
+deMorganLaw (Not p) = Not (deMorganLaw p)
+deMorganLaw (Imply p q) = Imply (deMorganLaw p) (deMorganLaw q)
+deMorganLaw (Var q) = (Var q)
+deMorganLaw (Const p) = (Const p)
