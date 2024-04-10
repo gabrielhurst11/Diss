@@ -70,18 +70,30 @@ disjIntR p q = Just (Or q p)
 impInt :: Prop -> Prop -> Maybe Prop
 impInt p q = Just (Imply p q)
 
-deMorganLaw :: Prop -> Prop
-deMorganLaw (Not (And p q)) = Or (Not p1) (Not q1)
-    where
-        p1 = (deMorganLaw p)
-        q1 = (deMorganLaw q)
-deMorganLaw (Not (Or p q)) = And (Not p2) (Not q2)
-    where
-        p2 = (deMorganLaw p)
-        q2 = (deMorganLaw q)
-deMorganLaw (And p q) = And (deMorganLaw p) (deMorganLaw q)
-deMorganLaw (Or p q) = Or (deMorganLaw p) (deMorganLaw q)
-deMorganLaw (Not p) = Not (deMorganLaw p)
-deMorganLaw (Imply p q) = Imply (deMorganLaw p) (deMorganLaw q)
-deMorganLaw (Var q) = (Var q)
-deMorganLaw (Const p) = (Const p)
+-- Apply De Morgan's Law to a given proposition, returning Maybe Prop
+deMorganLaw :: Prop -> Maybe Prop
+deMorganLaw (Not (And p q)) = do
+    p1 <- deMorganLaw p
+    q1 <- deMorganLaw q
+    return (Or (Not p1) (Not q1))
+deMorganLaw (Not (Or p q)) = do
+    p2 <- deMorganLaw p
+    q2 <- deMorganLaw q
+    return (And (Not p2) (Not q2))
+deMorganLaw (And p q) = do
+    p' <- deMorganLaw p
+    q' <- deMorganLaw q
+    return (And p' q')
+deMorganLaw (Or p q) = do
+    p' <- deMorganLaw p
+    q' <- deMorganLaw q
+    return (Or p' q')
+deMorganLaw (Not p) = do
+    p' <- deMorganLaw p
+    return (Not p')
+deMorganLaw (Imply p q) = do
+    p' <- deMorganLaw p
+    q' <- deMorganLaw q
+    return (Imply p' q')
+deMorganLaw (Var q) = Just (Var q)
+deMorganLaw (Const p) = Just (Const p)

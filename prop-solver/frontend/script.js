@@ -226,7 +226,7 @@ function openInputBox(title) {
         $('#propositionInput').val('');
         $('#inputModal').modal('show');
     }
-    else if (title == 'Conjunction Elimination (L)' || title == 'Conjunction Elimination (R)'){
+    else if (title == 'Conjunction Elimination (L)' || title == 'Conjunction Elimination (R)' || title === 'Apply DML'){
         $('#conjModalLabel').text('Choose Proposition for ' + title);
         $('#propositionChoice').val('');
         populateDropdown();
@@ -235,6 +235,8 @@ function openInputBox(title) {
             button.setAttribute("onclick", "sendResolution('r 1')");
         } else if (title === "Conjunction Elimination (R)") {
             button.setAttribute("onclick", "sendResolution('r 2')");
+        } else if (title === 'Apply DML'){
+            button.setAttribute("onclick", "sendResolution('r 7')");
         }
         $('#conjModal').modal('show');
     }

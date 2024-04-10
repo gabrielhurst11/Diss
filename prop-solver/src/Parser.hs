@@ -123,4 +123,8 @@ applyResolutionStep (x:y:xs)
                             Nothing -> Nothing
 
                     Nothing -> Nothing
+    | x == '7' = case parseProp xs of
+        Just prop -> deMorganLaw prop
+        Nothing -> Nothing
+
     | otherwise = Nothing
