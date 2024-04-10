@@ -116,8 +116,17 @@ socket.onopen = function() {
 
 socket.onmessage = function(event) {
     const data = event.data;
-    updateUI(data);
+    if (data == "Failed to process request"){
+        showError();
+    }
+    else{
+        updateUI(data);
+    }
 };
+
+function showError(){
+    console.log("Backend could not process request")
+}
 
 function sendProposition(requestType) {
     const expression = document.getElementById('expressionInput').value;
