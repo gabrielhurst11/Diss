@@ -143,8 +143,6 @@ function sendResolution(requestType) {
     // Save the proposition to the currentProposition variable
     currentProposition = expression;
     
-    // Display the proposition on the page
-    document.getElementById('output').innerText = currentProposition;
     
     // Send the proposition to the server
     const parsedExpression = parseExpression(expression, requestType);

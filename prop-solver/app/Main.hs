@@ -58,8 +58,8 @@ application pending = do
                 Nothing -> Just "Invalid request"
         -- Send response back to client
         case response of
-            Just res -> sendTextData conn (encodeUtf8 $ T.pack res)
-            Nothing -> putStrLn "Failed to process request"
+            Just res -> sendTextData conn (encodeUtf8 $ T.pack res) --send Prop as a string
+            Nothing -> sendTextData conn (encodeUtf8 $ T.pack "Failed to process request") -- send error message
 
 
 
