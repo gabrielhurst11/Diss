@@ -12,6 +12,7 @@ module Propositional
     , createTruthTable
     , NDTree(..)
     , exampleProofTree
+    ,exampleProofTree2
     , printNDTree
     ) where
 
@@ -91,6 +92,7 @@ createTruthTable prop = unlines $
 -- Define the data type for natural deduction trees
 data NDTree = Assumption Prop
             | Rule String [NDTree] Prop
+            | Hyp String [String] Prop
 
 
 exampleProofTree :: NDTree
@@ -101,6 +103,16 @@ exampleProofTree = Rule "Implication Introduction" [step1, step2, step3, step4] 
         step3 = Rule "Conjunction Elimination" [ Assumption (And (Var 'P') (Var 'Q'))] (Var 'Q')
         step4 = Rule "Conjunction Introduction" [Assumption (Var 'P')] (And (Var 'Q') (Var 'P'))
 
+exampleProofTree2 :: NDTree
+exampleProofTree2 = Rule "Implication Introduction" [step1,step2,step3,step4,step5,step6,step7] (Imply (And (And (Var 'P') (Var 'Q')) (Var 'R')) (And (Var 'P') (And (Var 'Q') (Var 'R'))))
+    where
+      step1 = Assumption (And (And (Var 'P') (Var 'Q')) (Var 'R'))
+      step2 = Hyp "ConjE" ["1"] (And (Var 'P') (Var 'Q'))
+      step3 = Hyp "ConjE" ["1"] (Var 'R')
+      step4 = Hyp "ConjE" ["2"] (Var 'P')
+      step5 = Hyp "ConjE" ["2"] (Var 'Q')
+      step6 = Hyp "ConjI" ["4,2"] (And (Var 'Q') (Var 'R'))
+      step7 = Hyp "ConjI" ["3,5"]  (And (Var 'P') (And (Var 'Q') (Var 'R')))
 
 -- Function to convert NDTree to a string representation with indentation
 printNDTree :: NDTree -> IO ()
@@ -111,3 +123,6 @@ printNDTree tree = printNDTreeHelper 0 tree
         putStrLn $ replicate indent ' ' ++ "Rule: " ++ ruleName
         mapM_ (printNDTreeHelper (indent + 2)) premises
         putStrLn $ replicate indent ' ' ++ "Conclusion: " ++ show conclusion
+
+    printNDTreeHelper indent (Hyp ruleName pointer conclusion) = do
+        putStrLn $ replicate indent ' ' ++ show conclusion ++ "  " ++ ruleName ++ ", " ++ concat pointer
