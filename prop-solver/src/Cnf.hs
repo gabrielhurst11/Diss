@@ -13,6 +13,8 @@ module Cnf
     , removeTautClauses
     , removeClauseLiterals
     , removeNegatedProp
+    , findUnitClause
+    , applyStep2
     ) where
 
 import Propositional (Prop(..))
@@ -69,6 +71,23 @@ removeClauseLiterals l clauses = filter (\clause -> l `notElem` clause) clauses
 removeNegatedProp :: Prop -> ClauseSet -> ClauseSet
 removeNegatedProp p clauses = map (filter (/= negation p)) clauses
 
+applyStep2functions :: Prop -> ClauseSet -> ClauseSet
+applyStep2functions p clauses = removeNegatedProp p (removeClauseLiterals p clauses)
+
+extractProp :: Clause -> Prop
+extractProp [l] = l
+
+findUnitClause :: ClauseSet -> Maybe Prop
+findUnitClause [] = Nothing
+findUnitClause (clause : rest)
+    | unitClauseCheck clause = Just $ extractProp clause
+    | otherwise = findUnitClause rest
+
+applyStep2 :: ClauseSet -> ClauseSet
+applyStep2 clauses =
+    case findUnitClause clauses of
+        Just p -> applyStep2functions p clauses
+        Nothing -> clauses
 
 pTest :: Prop
 pTest = Imply (Or (Var 'P') (Var 'Q')) (Or (Var 'Q') (Var 'R'))
