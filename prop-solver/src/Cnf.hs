@@ -15,6 +15,7 @@ module Cnf
     , removeNegatedProp
     , findUnitClause
     , applyStep2
+    , allUnitClauses
     ) where
 
 import Propositional (Prop(..))
@@ -89,6 +90,11 @@ applyStep2 clauses =
         Just p -> applyStep2functions p clauses
         Nothing -> clauses
 
+allUnitClauses :: ClauseSet -> ClauseSet
+allUnitClauses clauses
+    | (applyStep2 clauses) == clauses = clauses
+    | otherwise = allUnitClauses (applyStep2 clauses)
+
 pTest :: Prop
 pTest = Imply (Or (Var 'P') (Var 'Q')) (Or (Var 'Q') (Var 'R'))
 
@@ -99,5 +105,5 @@ pTest3 :: Prop
 pTest3 = Not(Imply (And (Var 'P') (Var 'Q')) (And (Var 'Q') (Var 'R')))
 
 pTest4 :: ClauseSet
-pTest4 = [[(Var 'A')], [(Var 'A'), (Var 'B')], [(Var 'C'), (Not (Var 'A'))] ]
+pTest4 = [[(Var 'A'), (Var 'D')], [(Var 'A'), (Var 'B')], [(Var 'C'), (Not (Var 'A'))] ]
 
