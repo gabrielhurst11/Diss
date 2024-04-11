@@ -10,6 +10,7 @@ let steps = [];
 let rules = [];
 
 function clearSteps(){
+    rules = [];
     steps = [];
     displaySteps();
 }
@@ -48,7 +49,13 @@ function displaySteps(){
     // Loop through steps and create list items
     steps.forEach((step, index) => {
         const stepItem = document.createElement('li');
-        stepItem.textContent = `${step}`;
+        if (index != 0){
+            const rule = rules[index - 1];
+            stepItem.textContent = `${step}     (Rule: ${rule})`;
+        }
+        else{
+            stepItem.textContent = `${step}`;
+        }
         stepsList.appendChild(stepItem);
     });
 
@@ -157,7 +164,7 @@ function sendResolution(requestType) {
     // Save the proposition to the currentProposition variable
     currentProposition = expression;
     
-    addRules(requestType, expressionIndex + 1);
+    addRules(requestType, parseInt(expressionIndex) + 1);
     // Send the proposition to the server
     const parsedExpression = parseExpression(expression, requestType);
     console.log(parsedExpression);
