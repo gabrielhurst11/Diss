@@ -38,6 +38,7 @@ modusPonens (Imply p q) r
     
 -- Negation function
 negation :: Prop -> Prop
+negation (Not p) = p
 negation p = Not p
 
 -- Returns conjunction if 2 values are known

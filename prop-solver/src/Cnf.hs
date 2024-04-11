@@ -11,10 +11,12 @@ module Cnf
     , getClauseSet
     , findCNF
     , removeTautClauses
-    ,removeClauseLiterals
+    , removeClauseLiterals
+    , removeNegatedProp
     ) where
 
 import Propositional (Prop(..))
+import Functions (negation)
 
 type Clause = [Prop]
 type ClauseSet = [Clause]
@@ -62,6 +64,10 @@ unitClauseCheck _ = False
 
 removeClauseLiterals :: Prop -> ClauseSet -> ClauseSet
 removeClauseLiterals l clauses = filter (\clause -> l `notElem` clause) clauses
+
+-- Remove the negation of a proposition from clauses containing it
+removeNegatedProp :: Prop -> ClauseSet -> ClauseSet
+removeNegatedProp p clauses = map (filter (/= negation p)) clauses
 
 
 pTest :: Prop
