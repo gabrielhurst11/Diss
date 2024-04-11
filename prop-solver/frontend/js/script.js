@@ -6,6 +6,9 @@ let currentProposition;
 // Variable to keep track of the steps
 let steps = [];
 
+// Create list of rules used and what they have used to derive answer
+let rules = [];
+
 function clearSteps(){
     steps = [];
     displaySteps();
@@ -25,6 +28,7 @@ function addAssum(){
     const expression = document.getElementById('propositionInput').value.trim();
 
     steps.push(expression);
+    addRules("Assum", "");
 
     displaySteps();
     $('#inputModal').modal('hide');
@@ -145,6 +149,7 @@ function sendProposition(requestType) {
     console.log(parsedExpression);
     socket.send(parsedExpression);
 }
+
 function sendResolution(requestType) {
     const expressionIndex = document.getElementById('stepDropdown').value;
     var expression = steps[expressionIndex];
@@ -152,7 +157,7 @@ function sendResolution(requestType) {
     // Save the proposition to the currentProposition variable
     currentProposition = expression;
     
-    
+    addRules(requestType, expressionIndex + 1);
     // Send the proposition to the server
     const parsedExpression = parseExpression(expression, requestType);
     console.log(parsedExpression);
@@ -167,12 +172,18 @@ function sendIntroduction(requestType) {
         const expressionIndex1 = document.getElementById('stepDropdown3').value;
         var expression1 = steps[expressionIndex1];
         var expression2 = document.getElementById('disjInput').value;
+        var pointer = parseInt(expressionIndex1) + 1
+        addRules(requestType, pointer);
     }
     else{
         const expressionIndex1 = document.getElementById('stepDropdown1').value;
         var expression1 = steps[expressionIndex1];
         const expressionIndex2 = document.getElementById('stepDropdown2').value;
         var expression2 = steps[expressionIndex2];
+        var p1 = parseInt(expressionIndex1) + 1;
+        var p2 = parseInt(expressionIndex2) + 1;
+        var pointer = p1 + ", " + p2; 
+        addRules(requestType, pointer);
     }
     currentRequest = "Resolution";   
     // Save the propositions to the currentProposition variable
@@ -188,6 +199,34 @@ function sendIntroduction(requestType) {
     $('#intModal').modal('hide');
     $('#disjModal').modal('hide');
 }
+
+function addRules(requestType, index){
+    let rule = "";
+    if (requestType === 'r 1' || requestType === 'r 2'){
+        rule = "conjE,  " + index; 
+    }
+    else if (requestType === 'r 7'){
+        rule = "DeMorgan,  " + index;
+    }
+    else if (requestType === 'r 5' || requestType === 'r 6'){
+        rule = "disjI,  " + index;
+    }
+    else if (requestType === 'r 8'){
+        rule = "impE,  " + index;
+    }
+    else if (requestType === 'r 4'){
+        rule = "impI,  " + index;
+    }
+    else if (requestType === 'r 3'){
+        rule = "conjI,  " + index;
+    }
+    else if (requestType === 'Assum'){
+        rule = "Assum";
+    }
+    rules.push(rule);
+    console.log(rules);
+}
+
 
 // Function to parse the expression and convert it into the desired format
 function parseExpression(expression, requestType) {
