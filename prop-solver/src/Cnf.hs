@@ -8,6 +8,7 @@ module Cnf
     , pTest2
     , pTest3
     , pTest4
+    , pTest5
     , getClauseSet
     , findCNF
     , removeTautClauses
@@ -145,3 +146,5 @@ pTest3 = Not(Imply (And (Var 'P') (Var 'Q')) (And (Var 'Q') (Var 'R')))
 pTest4 :: ClauseSet
 pTest4 = [[(Var 'A'), (Var 'D')], [(Var 'A'), (Var 'B')], [(Var 'C'), (Not (Var 'A'))] ]
 
+pTest5 :: ClauseSet
+pTest5 = [[(Var 'P'), (Var 'Q'), (Not (Var 'R'))], [(Not (Var 'P')), (Var 'Q'), (Not (Var 'R'))], [(Not (Var 'Q')), (Not (Var 'R'))], [(Not (Var 'P')), (Var 'R')], [(Var 'P'), (Var 'R')]]
