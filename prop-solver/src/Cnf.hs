@@ -15,7 +15,11 @@ module Cnf
     , removeNegatedProp
     , findUnitClause
     , applyStep2
+    , applyStep5True
     , allUnitClauses
+    , getFirstLiteral
+    , pickLiteral
+    , addClause
     ) where
 
 import Propositional (Prop(..))
@@ -23,6 +27,7 @@ import Functions (negation)
 
 type Clause = [Prop]
 type ClauseSet = [Clause]
+type CaseSplit = [ClauseSet]
 
 elimImp :: Prop -> Prop
 elimImp (Imply p q) = Or (Not (elimImp p)) (elimImp q)
@@ -94,6 +99,39 @@ allUnitClauses :: ClauseSet -> ClauseSet
 allUnitClauses clauses
     | (applyStep2 clauses) == clauses = clauses
     | otherwise = allUnitClauses (applyStep2 clauses)
+
+applyStep5True :: ClauseSet -> Maybe [ClauseSet]
+applyStep5True clauses =
+    case pickLiteral clauses of
+        Just p -> do
+            let clausesAddT = addClause clauses p
+            let applyTrue = (allUnitClauses clausesAddT) 
+            let clausesAddF = addClause clauses (Not p)
+            let applyFalse = (allUnitClauses clausesAddF)
+            Just [applyTrue, applyFalse]
+        otherwise -> Nothing
+
+applyStep5False :: ClauseSet -> Maybe ClauseSet
+applyStep5False clauses =
+    case pickLiteral clauses of
+        Just p -> do
+            let clausesAdd = addClause clauses p 
+            Just (allUnitClauses clausesAdd)
+        otherwise -> Nothing
+
+addClause :: ClauseSet -> Prop -> ClauseSet
+addClause [] p = [[p]]
+addClause clauses p = [p] : clauses
+
+
+pickLiteral :: ClauseSet -> Maybe Prop
+pickLiteral [] = Nothing
+pickLiteral (clause : _) = getFirstLiteral clause
+
+-- Define a function to get the first proposition from a clause
+getFirstLiteral :: Clause -> Maybe Prop
+getFirstLiteral [] = Nothing 
+getFirstLiteral (prop : _) = Just prop
 
 pTest :: Prop
 pTest = Imply (Or (Var 'P') (Var 'Q')) (Or (Var 'Q') (Var 'R'))
