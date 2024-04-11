@@ -9,6 +9,7 @@ module Cnf
     , pTest3
     , getClauseSet
     , findCNF
+    , removeTautClauses
     ) where
 
 import Propositional (Prop(..))
@@ -46,6 +47,12 @@ getClauseSet (Or p q) = [pClause ++ qClause | pClause <- getClauseSet p, qClause
 
 findCNF :: Prop -> ClauseSet
 findCNF p = getClauseSet(distribute(pushNegation(elimImp(p))))
+
+removeTautClauses :: ClauseSet -> ClauseSet
+removeTautClauses = filter (not . isTautologicalClause)
+  where
+    isTautologicalClause :: Clause -> Bool
+    isTautologicalClause clause = any (\p -> Not p `elem` clause) clause
 
 pTest :: Prop
 pTest = Imply (Or (Var 'P') (Var 'Q')) (Or (Var 'Q') (Var 'R'))
