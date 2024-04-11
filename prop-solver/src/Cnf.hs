@@ -6,7 +6,9 @@ module Cnf
     , distribute
     , pTest
     , pTest2
+    , pTest3
     , getClauseSet
+    , findCNF
     ) where
 
 import Propositional (Prop(..))
@@ -42,9 +44,15 @@ getClauseSet (Not (Var p)) = [[Not (Var p)]]
 getClauseSet (And p q) = getClauseSet p ++ getClauseSet q
 getClauseSet (Or p q) = [pClause ++ qClause | pClause <- getClauseSet p, qClause <- getClauseSet q]
 
+findCNF :: Prop -> ClauseSet
+findCNF p = getClauseSet(distribute(pushNegation(elimImp(p))))
+
 pTest :: Prop
 pTest = Imply (Or (Var 'P') (Var 'Q')) (Or (Var 'Q') (Var 'R'))
 
 pTest2 :: Prop
 pTest2 = Imply (Imply (Imply (Var 'P') (Var 'Q')) (Var 'P')) (Var 'P')
+
+pTest3 :: Prop
+pTest3 = Not(Imply (And (Var 'P') (Var 'Q')) (And (Var 'Q') (Var 'R')))
 
