@@ -207,6 +207,17 @@ function sendIntroduction(requestType) {
     $('#disjModal').modal('hide');
 }
 
+function sendSATProp(requestType){
+    const expression = document.getElementById('expressionInput').value;
+    currentProposition = expression;
+    
+    // Send the proposition to the server
+    const parsedExpression = parseExpression(expression, requestType);
+    console.log(parsedExpression);
+    socket.send(parsedExpression);
+    
+}
+
 function addRules(requestType, index){
     let rule = "";
     if (requestType === 'r 1' || requestType === 'r 2'){
