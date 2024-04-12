@@ -26,6 +26,7 @@ module Cnf
     , pickLiteral
     , addClause
     , findCNFString
+    , cnfConversionSteps
     ) where
 
 import Propositional (Prop(..))
@@ -78,6 +79,25 @@ showProp :: Prop -> String
 showProp (Var v) = [v]
 showProp (Not p) = "Not " ++ showProp p
 showProp p = show p
+
+cnfConversionSteps :: Prop -> String
+cnfConversionSteps prop =
+    let step1 = elimImp prop
+        step2 = pushNegation step1
+        step3 = distribute step2
+        step4 = getClauseSet step3
+
+    in unlines $
+        [ "Step 1 (Eliminate Implications): " ++ show step1
+        , "Step 2 (Push Negations): " ++ show step2
+        , "Step 3 (Distribute): " ++ show step3
+        , "Step 4 (Get Clause Sets): " ++ findCNFString step4 
+        ]
+
+
+
+
+
 
 removeTautClauses :: ClauseSet -> ClauseSet
 removeTautClauses = filter (not . isTautologicalClause)

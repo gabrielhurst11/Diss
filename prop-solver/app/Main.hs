@@ -29,7 +29,7 @@ handleRequest (TruthTableRequest expr) = createTruthTable <$> parseProp expr
 handleRequest (ResolutionRequest exprStep) = show <$> applyResolutionStep exprStep
 handleRequest (SatRequest expr) =
     case parseProp expr of
-        Just prop -> Just (findCNFString (findCNF prop))
+        Just prop -> Just (cnfConversionSteps prop)
         Nothing -> Just ("Failed to parse expression")
 
 parseRequest :: String -> Maybe RequestType
