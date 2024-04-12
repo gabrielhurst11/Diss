@@ -74,15 +74,48 @@ function clearInput() {
 // Function to update the UI with the received data
 function updateUI(data) {
     const outputDiv = document.getElementById("output");
-    if (currentRequest == "Table"){
+    if (currentRequest === "Table"){
         outputDiv.innerHTML = ''; //Clear current Table
         outputDiv.innerHTML += createTableFromData(data);
     }
-    else if (currentRequest == "Resolution"){
+    else if (currentRequest === "Resolution"){
         addStep(data);
+    }
+    else if (currentRequest === "SAT"){
+        outputDiv.innerHTML = '';
+        displayCNFSteps(data, outputDiv);
     }
 }
 
+function displayCNFSteps(stepsString, container) {
+    // Parse the string into an array of step objects
+    const stepsArray = stepsString.trim().split('\n');
+
+    // Iterate over each step and create HTML elements to represent them
+    stepsArray.forEach(stepString => {
+        const [stepNumber, description, result] = stepString.split(': ');
+        
+        // Create elements for step number, description, and result
+        const stepNumberElement = document.createElement('div');
+        stepNumberElement.textContent = stepNumber;
+
+        const descriptionElement = document.createElement('div');
+        descriptionElement.textContent = description;
+
+        const resultElement = document.createElement('div');
+        resultElement.textContent = result;
+
+        // Create a container for the step
+        const stepContainer = document.createElement('div');
+        stepContainer.classList.add('cnf-step');
+        stepContainer.appendChild(stepNumberElement);
+        stepContainer.appendChild(descriptionElement);
+        stepContainer.appendChild(resultElement);
+
+        // Append the step container to the provided container
+        container.appendChild(stepContainer);
+    });
+}
 
 // Function to create an HTML table from the received data
 function createTableFromData(data) {
@@ -210,6 +243,7 @@ function sendIntroduction(requestType) {
 function sendSATProp(requestType){
     const expression = document.getElementById('expressionInput').value;
     currentProposition = expression;
+    currentRequest = "SAT";
     
     // Send the proposition to the server
     const parsedExpression = parseExpression(expression, requestType);
