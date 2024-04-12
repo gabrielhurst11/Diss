@@ -16,7 +16,9 @@ module Cnf
     , removeNegatedProp
     , findUnitClause
     , applyStep2
-    , applyStep5True
+    , applyStep5
+    , checkSAT
+    , checkSATSplit
     , allUnitClauses
     , getFirstLiteral
     , pickLiteral
@@ -101,8 +103,8 @@ allUnitClauses clauses
     | (applyStep2 clauses) == clauses = clauses
     | otherwise = allUnitClauses (applyStep2 clauses)
 
-applyStep5True :: ClauseSet -> Maybe [ClauseSet]
-applyStep5True clauses =
+applyStep5 :: ClauseSet -> Maybe [ClauseSet]
+applyStep5 clauses =
     case pickLiteral clauses of
         Just p -> do
             let clausesAddT = addClause clauses p
@@ -112,13 +114,6 @@ applyStep5True clauses =
             Just [applyTrue, applyFalse]
         otherwise -> Nothing
 
-applyStep5False :: ClauseSet -> Maybe ClauseSet
-applyStep5False clauses =
-    case pickLiteral clauses of
-        Just p -> do
-            let clausesAdd = addClause clauses p 
-            Just (allUnitClauses clausesAdd)
-        otherwise -> Nothing
 
 addClause :: ClauseSet -> Prop -> ClauseSet
 addClause [] p = [[p]]
@@ -134,6 +129,14 @@ getFirstLiteral :: Clause -> Maybe Prop
 getFirstLiteral [] = Nothing 
 getFirstLiteral (prop : _) = Just prop
 
+checkSAT :: ClauseSet -> Bool
+checkSAT [] = True
+checkSAT _ = False
+
+checkSATSplit :: [ClauseSet] -> Bool
+checkSATSplit [[],[]] = True
+checkSATSplit _ = False 
+
 pTest :: Prop
 pTest = Imply (Or (Var 'P') (Var 'Q')) (Or (Var 'Q') (Var 'R'))
 
@@ -144,7 +147,7 @@ pTest3 :: Prop
 pTest3 = Not(Imply (And (Var 'P') (Var 'Q')) (And (Var 'Q') (Var 'R')))
 
 pTest4 :: ClauseSet
-pTest4 = [[(Var 'A'), (Var 'D')], [(Var 'A'), (Var 'B')], [(Var 'C'), (Not (Var 'A'))] ]
+pTest4 = [[(Var 'A')], [(Var 'A'), (Var 'B')], [(Var 'C'), (Not (Var 'A'))] ]
 
 pTest5 :: ClauseSet
 pTest5 = [[(Var 'P'), (Var 'Q'), (Not (Var 'R'))], [(Not (Var 'P')), (Var 'Q'), (Not (Var 'R'))], [(Not (Var 'Q')), (Not (Var 'R'))], [(Not (Var 'P')), (Var 'R')], [(Var 'P'), (Var 'R')]]
