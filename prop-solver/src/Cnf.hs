@@ -9,6 +9,8 @@ module Cnf
     , pTest3
     , pTest4
     , pTest5
+    , pTest6
+    , pTest7
     , getClauseSet
     , findCNF
     , removeTautClauses
@@ -136,6 +138,12 @@ checkSAT _ = False
 checkSATSplit :: [ClauseSet] -> Bool
 checkSATSplit [[],[]] = True
 checkSATSplit _ = False 
+
+pTest6 :: Prop
+pTest6 = And (Or (Var 'P') (Var 'Q')) (And (Or (Not (Var 'P')) (Var 'R')) (Or (Var 'Q') (Not (Var 'R'))))
+
+pTest7 :: Prop
+pTest7 = (And (Or (Not (Var 'P')) (Var 'R')) (Or (Var 'Q') (Not (Var 'R'))))
 
 pTest :: Prop
 pTest = Imply (Or (Var 'P') (Var 'Q')) (Or (Var 'Q') (Var 'R'))
