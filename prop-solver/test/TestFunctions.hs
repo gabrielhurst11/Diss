@@ -29,6 +29,12 @@ varB = Var 'B'
 aOrB:: Prop
 aOrB = Or (Var 'A') (Var 'B')
 
+notAOrNotB :: Prop
+notAOrNotB = Or (Not (Var 'A')) (Not (Var 'B'))
+
+notAAndNotB :: Prop
+notAAndNotB = And (Not (Var 'A')) (Not (Var 'B'))
+
 
 -- Test cases
 negation1 :: Test
@@ -36,6 +42,9 @@ negation1 = TestCase (assertEqual "Negation Test 1" (negation (Var 'A')) notA)
 
 negation2 :: Test
 negation2 = TestCase (assertEqual "Negation Test 2" (negation (And (Var 'A') (Var 'B'))) notAAndB)
+
+negation3 :: Test
+negation3 = TestCase (assertEqual "Negation Test 3" (negation (notA)) varA)
 
 conjInt1 :: Test
 conjInt1 = TestCase (assertEqual "Conjunction Introduction Test 1" (conjInt (Var 'A') (Var 'B')) (Just aAndB))
@@ -70,6 +79,13 @@ disjIntR1 = TestCase (assertEqual "Disjunction Introduction Test 2" (disjIntR va
 impInt1 :: Test
 impInt1 = TestCase (assertEqual "Implication Introduction Test 1" (impInt varA varB) (Just aImpliesB))
 
+deMorganLaw1 :: Test
+deMorganLaw1 = TestCase (assertEqual "De Morgan Test 1" (deMorganLaw (Not aAndB)) (Just notAOrNotB))
+
+deMorganLaw2 :: Test
+deMorganLaw2 = TestCase (assertEqual "De Morgan Test 2" (deMorganLaw (Not aOrB)) (Just notAAndNotB))
+
 -- Test list
 tests :: Test
-tests = TestList [negation1,negation2, conjInt1, conjElimL1, conjElimL2, conjElimR1, conjElimR2, impElim1, impElim2, impElim3, disjIntL1, disjIntR1, impInt1]
+tests = TestList [negation1,negation2, negation3, conjInt1, conjElimL1, conjElimL2, conjElimR1, conjElimR2, 
+                    impElim1, impElim2, impElim3, disjIntL1, disjIntR1, impInt1, deMorganLaw1,deMorganLaw2]

@@ -140,9 +140,6 @@ finalDPLL p = case checkSAT dpllStep of
     checkStep5 = checkSATSplit <$> (applyStep5 dpllStep)
 
 
-
-
-
 removeTautClauses :: ClauseSet -> ClauseSet
 removeTautClauses = filter (not . isTautologicalClause)
   where
