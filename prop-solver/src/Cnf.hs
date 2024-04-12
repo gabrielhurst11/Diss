@@ -1,34 +1,7 @@
 module Cnf
     ( Clause
     , ClauseSet
-    , elimImp
-    , pushNegation
-    , distribute
-    , pTest
-    , pTest2
-    , pTest3
-    , pTest4
-    , pTest5
-    , pTest6
-    , pTest7
-    , pTest8
-    , getClauseSet
-    , findCNF
-    , removeTautClauses
-    , removeClauseLiterals
-    , removeNegatedProp
-    , findUnitClause
-    , applyStep2
-    , applyStep5
-    , checkSAT
-    , checkSATSplit
-    , allUnitClauses
-    , getFirstLiteral
-    , pickLiteral
-    , addClause
-    , findCNFString
     , cnfConversionSteps
-    , finalDPLL
     ) where
 
 import Propositional (Prop(..))
@@ -37,7 +10,6 @@ import Data.List (intercalate)
 
 type Clause = [Prop]
 type ClauseSet = [Clause]
-type CaseSplit = [ClauseSet]
 
 elimImp :: Prop -> Prop
 elimImp (Imply p q) = Or (Not (elimImp p)) (elimImp q)
@@ -66,6 +38,8 @@ getClauseSet (Var p) = [[Var p]]
 getClauseSet (Not (Var p)) = [[Not (Var p)]]
 getClauseSet (And p q) = getClauseSet p ++ getClauseSet q
 getClauseSet (Or p q) = [pClause ++ qClause | pClause <- getClauseSet p, qClause <- getClauseSet q]
+getClauseSet _ = []
+
 
 findCNF :: Prop -> ClauseSet
 findCNF p = removeTautClauses(getClauseSet(distribute(pushNegation(elimImp(p)))))
@@ -243,29 +217,3 @@ checkSAT _ = Nothing
 checkSATSplit :: [ClauseSet] -> Bool
 checkSATSplit [[],[]] = True
 checkSATSplit _ = False 
-
-
-
-pTest8 :: Prop
-pTest8 = Not (Imply (And (Var 'P') (Var 'Q')) (And (Var 'Q') (Var 'R')))
-
-pTest6 :: Prop
-pTest6 = And (Or (Var 'P') (Var 'Q')) (And (Or (Not (Var 'P')) (Var 'R')) (Or (Var 'Q') (Not (Var 'R'))))
-
-pTest7 :: Prop
-pTest7 = (And (Or (Not (Var 'P')) (Var 'R')) (Or (Var 'Q') (Not (Var 'R'))))
-
-pTest :: Prop
-pTest = Imply (And (Var 'P') (Var 'Q')) (And (Var 'Q') (Var 'R'))
-
-pTest2 :: Prop
-pTest2 = Imply (Imply (Imply (Var 'P') (Var 'Q')) (Var 'P')) (Var 'P')
-
-pTest3 :: Prop
-pTest3 = Not(Imply (And (Var 'P') (Var 'Q')) (And (Var 'Q') (Var 'R')))
-
-pTest4 :: ClauseSet
-pTest4 = [[(Var 'A')], [(Var 'A'), (Var 'B')], [(Var 'C'), (Not (Var 'A'))] ]
-
-pTest5 :: ClauseSet
-pTest5 = [[(Var 'P'), (Var 'Q'), (Not (Var 'R'))], [(Not (Var 'P')), (Var 'Q'), (Not (Var 'R'))], [(Not (Var 'Q')), (Not (Var 'R'))], [(Not (Var 'P')), (Var 'R')], [(Var 'P'), (Var 'R')]]
