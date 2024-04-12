@@ -11,6 +11,7 @@ module Cnf
     , pTest5
     , pTest6
     , pTest7
+    , pTest8
     , getClauseSet
     , findCNF
     , removeTautClauses
@@ -27,6 +28,7 @@ module Cnf
     , addClause
     , findCNFString
     , cnfConversionSteps
+    , finalDPLL
     ) where
 
 import Propositional (Prop(..))
@@ -66,7 +68,7 @@ getClauseSet (And p q) = getClauseSet p ++ getClauseSet q
 getClauseSet (Or p q) = [pClause ++ qClause | pClause <- getClauseSet p, qClause <- getClauseSet q]
 
 findCNF :: Prop -> ClauseSet
-findCNF p = getClauseSet(distribute(pushNegation(elimImp(p))))
+findCNF p = removeTautClauses(getClauseSet(distribute(pushNegation(elimImp(p)))))
 
 findCNFString :: ClauseSet -> String
 findCNFString clauses = intercalate " And " (map showClause clauses)
@@ -86,14 +88,36 @@ cnfConversionSteps prop =
         step2 = pushNegation step1
         step3 = distribute step2
         step4 = getClauseSet step3
+        step5 = removeTautClauses step4
+        step6 = applyStep2 step5
+
 
     in unlines $
         [ "Step 1 (Eliminate Implications): " ++ show step1
         , "Step 2 (Push Negations): " ++ show step2
         , "Step 3 (Distribute): " ++ show step3
         , "Step 4 (Get Clause Sets): " ++ findCNFString step4 
+        , "Step 5 (Remove Tautological Clauses): " ++ findCNFString step5
+        , "DPLL Algorithm"
+        , "Step 1 For each Unit Clause 'l': "
+        , "Delete Clauses containing l"
+        , "Delete Not l from all clauses"
+        , "Final for each Unit Clause" ++ findCNFString step6
+
         ]
 
+
+
+         
+finalDPLL :: Prop -> Maybe Bool
+finalDPLL p = case checkSAT dpllStep of
+    Just True -> Just True
+    Just False -> Just False
+    Nothing -> checkStep5
+  where
+    cnfConv = findCNF p
+    dpllStep = allUnitClauses cnfConv
+    checkStep5 = checkSATSplit <$> (applyStep5 dpllStep)
 
 
 
@@ -165,13 +189,19 @@ getFirstLiteral :: Clause -> Maybe Prop
 getFirstLiteral [] = Nothing 
 getFirstLiteral (prop : _) = Just prop
 
-checkSAT :: ClauseSet -> Bool
-checkSAT [] = True
-checkSAT _ = False
+checkSAT :: ClauseSet -> Maybe Bool
+checkSAT [] = Just True
+checkSAT [[]] = Just False
+checkSAT _ = Nothing
 
 checkSATSplit :: [ClauseSet] -> Bool
 checkSATSplit [[],[]] = True
 checkSATSplit _ = False 
+
+
+
+pTest8 :: Prop
+pTest8 = Not (Imply (And (Var 'P') (Var 'Q')) (And (Var 'Q') (Var 'R')))
 
 pTest6 :: Prop
 pTest6 = And (Or (Var 'P') (Var 'Q')) (And (Or (Not (Var 'P')) (Var 'R')) (Or (Var 'Q') (Not (Var 'R'))))
