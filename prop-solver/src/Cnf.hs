@@ -25,10 +25,12 @@ module Cnf
     , getFirstLiteral
     , pickLiteral
     , addClause
+    , findCNFString
     ) where
 
 import Propositional (Prop(..))
 import Functions (negation)
+import Data.List (intercalate)
 
 type Clause = [Prop]
 type ClauseSet = [Clause]
@@ -64,6 +66,18 @@ getClauseSet (Or p q) = [pClause ++ qClause | pClause <- getClauseSet p, qClause
 
 findCNF :: Prop -> ClauseSet
 findCNF p = getClauseSet(distribute(pushNegation(elimImp(p))))
+
+findCNFString :: ClauseSet -> String
+findCNFString clauses = intercalate " And " (map showClause clauses)
+
+showClause :: Clause -> String
+showClause [] = "False"
+showClause props = "( " ++ intercalate " Or " (map showProp props) ++ " ) "
+
+showProp :: Prop -> String
+showProp (Var v) = [v]
+showProp (Not p) = "Not " ++ showProp p
+showProp p = show p
 
 removeTautClauses :: ClauseSet -> ClauseSet
 removeTautClauses = filter (not . isTautologicalClause)

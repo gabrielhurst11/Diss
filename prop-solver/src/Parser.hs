@@ -16,6 +16,7 @@ import Text.Parsec
 import Text.Parsec.String (Parser)
 import Propositional (Prop(..))
 import Functions
+import Cnf
 
 parseExpr :: Parser Prop
 parseExpr = parseConst <|> parseVar <|> parseNot <|> parseAnd <|> parseOr <|> parseImply
@@ -137,5 +138,4 @@ applyResolutionStep (x:y:xs)
                             Nothing -> Nothing
 
                     Nothing -> Nothing
-
     | otherwise = Nothing

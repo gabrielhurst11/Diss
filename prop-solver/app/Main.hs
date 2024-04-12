@@ -15,21 +15,28 @@ import Parser
 
 -- Define a data type to represent different types of requests
 data RequestType = TruthTableRequest String  -- Request for truth table generation
-             | ResolutionRequest String  -- Request for resolution step application
+             | ResolutionRequest String   -- Request for resolution step application
+             | SatRequest String -- Request to apply DPLL algorithm
 
 instance Show RequestType where
     show (TruthTableRequest expr) = "TruthTableRequest " ++ expr
     show (ResolutionRequest stepExpr) = "ResolutionRequest " ++ stepExpr
+    show (SatRequest expr) = "SatRequest " ++ expr
 
 -- Define a function to handle different types of requests
 handleRequest :: RequestType -> Maybe String
 handleRequest (TruthTableRequest expr) = createTruthTable <$> parseProp expr
 handleRequest (ResolutionRequest exprStep) = show <$> applyResolutionStep exprStep
+handleRequest (SatRequest expr) =
+    case parseProp expr of
+        Just prop -> Just (findCNFString (findCNF prop))
+        Nothing -> Just ("Failed to parse expression")
 
 parseRequest :: String -> Maybe RequestType
 parseRequest str
     | not (null str) && head str == 't' = parseExpressionRequest TruthTableRequest (drop 2 str)  -- Skip the leading 't '
     | not (null str) && head str == 'r' = parseExpressionRequest ResolutionRequest (drop 2 str)  -- Skip the leading 'r '
+    | not (null str) && head str == 's' = parseExpressionRequest SatRequest (drop 2 str) -- Skip leading 's '
     | otherwise = Nothing
 
 parseExpressionRequest :: (String -> RequestType) -> String -> Maybe RequestType
