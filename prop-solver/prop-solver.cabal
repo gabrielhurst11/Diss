@@ -68,6 +68,7 @@ test-suite prop-solver-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      TestCNF
       TestFunctions
       Paths_prop_solver
   autogen-modules:

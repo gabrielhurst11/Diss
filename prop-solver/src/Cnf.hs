@@ -2,6 +2,10 @@ module Cnf
     ( Clause
     , ClauseSet
     , cnfConversionSteps
+    , elimImp
+    , pushNegation
+    , distribute
+    , getClauseSet
     ) where
 
 import Propositional (Prop(..))
