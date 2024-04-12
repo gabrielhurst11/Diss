@@ -71,16 +71,18 @@ findCNF :: Prop -> ClauseSet
 findCNF p = removeTautClauses(getClauseSet(distribute(pushNegation(elimImp(p)))))
 
 findCNFString :: ClauseSet -> String
-findCNFString clauses = intercalate " And " (map showClause clauses)
+findCNFString clauses = intercalate " , " (map showClause clauses)
 
 showClause :: Clause -> String
 showClause [] = "False"
-showClause props = "( " ++ intercalate " Or " (map showProp props) ++ " ) "
+showClause props = "{ " ++ intercalate ", " (map showProp props) ++ " } "
 
 showProp :: Prop -> String
 showProp (Var v) = [v]
 showProp (Not p) = "Not " ++ showProp p
 showProp p = show p
+
+
 
 cnfConversionSteps :: Prop -> String
 cnfConversionSteps prop =
@@ -89,24 +91,68 @@ cnfConversionSteps prop =
         step3 = distribute step2
         step4 = getClauseSet step3
         step5 = removeTautClauses step4
-        step6 = applyStep2 step5
-
-
-    in unlines $
-        [ "Step 1 (Eliminate Implications): " ++ show step1
-        , "Step 2 (Push Negations): " ++ show step2
-        , "Step 3 (Distribute): " ++ show step3
-        , "Step 4 (Get Clause Sets): " ++ findCNFString step4 
-        , "Step 5 (Remove Tautological Clauses): " ++ findCNFString step5
-        , "DPLL Algorithm"
-        , "Step 1 For each Unit Clause 'l': "
-        , "Delete Clauses containing l"
-        , "Delete Not l from all clauses"
-        , "Final for each Unit Clause" ++ findCNFString step6
-
-        ]
-
-
+        step6 = allUnitClauses step5
+        value = checkSAT step6
+    in case value of
+        Just True -> unlines $
+            [ "Step 1 (Eliminate Implications): " ++ show step1
+            , "Step 2 (Push Negations): " ++ show step2
+            , "Step 3 (Distribute): " ++ show step3
+            , "Step 4 (Get Clause Sets): " ++ findCNFString step4 
+            , "Step 5 (Remove Tautological Clauses): " ++ findCNFString step5
+            , "DPLL Algorithm"
+            , "Step 1 For each Unit Clause 'l': "
+            , "Delete Clauses containing l"
+            , "Delete Not l from all clauses"
+            , "Final for each Unit Clause" ++ findCNFString step6
+            , "The Proposition is Satisfiable as it has returned an empty clause set"
+            ]
+        Just False -> unlines $
+            [ "Step 1 (Eliminate Implications): " ++ show step1
+            , "Step 2 (Push Negations): " ++ show step2
+            , "Step 3 (Distribute): " ++ show step3
+            , "Step 4 (Get Clause Sets): " ++ findCNFString step4 
+            , "Step 5 (Remove Tautological Clauses): " ++ findCNFString step5
+            , "DPLL Algorithm"
+            , "Step 1 For each Unit Clause 'l': "
+            , "Delete Clauses containing l"
+            , "Delete Not l from all clauses"
+            , "Final for each Unit Clause" ++ findCNFString step6
+            , "The Proposition is UnSatisfiable as it has returned an empty clause within the Clause Set"
+            ]
+        Nothing -> 
+            let step7 = applyStep5 step6
+                newValue = checkSATSplit <$> step7
+            in case newValue of 
+                Just True -> unlines $
+                    [ "Step 1 (Eliminate Implications): " ++ show step1
+                    , "Step 2 (Push Negations): " ++ show step2
+                    , "Step 3 (Distribute): " ++ show step3
+                    , "Step 4 (Get Clause Sets): " ++ findCNFString step4 
+                    , "Step 5 (Remove Tautological Clauses): " ++ findCNFString step5
+                    , "DPLL Algorithm"
+                    , "Step 1 For each Unit Clause 'l': "
+                    , "Delete Clauses containing l"
+                    , "Delete Not l from all clauses"
+                    , "Final for each Unit Clause" ++ findCNFString step6
+                    , "There are no more unit clauses to check, so pick literal and perform case split"
+                    , "Proposition is Satisfiable as case split returned [],[]"
+                    ]
+                Just False -> unlines $
+                    [ "Step 1 (Eliminate Implications): " ++ show step1
+                    , "Step 2 (Push Negations): " ++ show step2
+                    , "Step 3 (Distribute): " ++ show step3
+                    , "Step 4 (Get Clause Sets): " ++ findCNFString step4 
+                    , "Step 5 (Remove Tautological Clauses): " ++ findCNFString step5
+                    , "DPLL Algorithm"
+                    , "Step 1 For each Unit Clause 'l': "
+                    , "Delete Clauses containing l"
+                    , "Delete Not l from all clauses"
+                    , "Final for each Unit Clause" ++ findCNFString step6
+                    , "There are no more unit clauses to check, so pick literal and perform case split"
+                    , "Proposition is Unsatisfiable as case split returned an empty clause in the clauseSet [],[]"
+                    ]
+                Nothing -> "Satisfiability couldn't be determined."
 
          
 finalDPLL :: Prop -> Maybe Bool
@@ -210,7 +256,7 @@ pTest7 :: Prop
 pTest7 = (And (Or (Not (Var 'P')) (Var 'R')) (Or (Var 'Q') (Not (Var 'R'))))
 
 pTest :: Prop
-pTest = Imply (Or (Var 'P') (Var 'Q')) (Or (Var 'Q') (Var 'R'))
+pTest = Imply (And (Var 'P') (Var 'Q')) (And (Var 'Q') (Var 'R'))
 
 pTest2 :: Prop
 pTest2 = Imply (Imply (Imply (Var 'P') (Var 'Q')) (Var 'P')) (Var 'P')
