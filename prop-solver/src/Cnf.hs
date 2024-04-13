@@ -5,7 +5,10 @@ module Cnf
     , elimImp
     , pushNegation
     , distribute
+    , findCNF
+    , allUnitClauses
     , getClauseSet
+    , findCNFString
     ) where
 
 import Propositional (Prop(..))
@@ -50,10 +53,11 @@ findCNF :: Prop -> ClauseSet
 findCNF p = removeTautClauses(getClauseSet(distribute(pushNegation(elimImp(p)))))
 
 findCNFString :: ClauseSet -> String
-findCNFString clauses = intercalate " , " (map showClause clauses)
+findCNFString [] = "{}"
+findCNFString clauses = "{ " ++ intercalate " , " (map showClause clauses) ++ " } "
 
 showClause :: Clause -> String
-showClause [] = "False"
+showClause [] = "{}"
 showClause props = "{ " ++ intercalate ", " (map showProp props) ++ " } "
 
 showProp :: Prop -> String
