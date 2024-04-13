@@ -74,6 +74,7 @@ cnfConversionSteps prop =
         step3 = distribute step2
         step4 = getClauseSet step3
         step5 = removeTautClauses step4
+        firstUnitClause = findUnitClause step5
         step6 = allUnitClauses step5
         value = checkSAT step6
     in case value of
@@ -84,6 +85,7 @@ cnfConversionSteps prop =
             , "Step 4: (Get Clause Sets): " ++ findCNFString step4 
             , "Step 5: (Remove Tautological Clauses): " ++ findCNFString step5
             , "DPLL Algorithm : : "
+            , ": First found Unit Clause: " ++ unitClauseString firstUnitClause
             , ": For each Unit Clause 'l': "
             , ": Delete Clauses containing l: "
             , ": Delete Not l from all clauses: "
@@ -97,6 +99,7 @@ cnfConversionSteps prop =
             , "Step 4 (Get Clause Sets): " ++ findCNFString step4 
             , "Step 5 (Remove Tautological Clauses): " ++ findCNFString step5
             , "DPLL Algorithm : : "
+            , ": First found Unit Clause: " ++ unitClauseString firstUnitClause
             , ": For each Unit Clause 'l': "
             , ": Delete Clauses containing l: "
             , ": Delete Not l from all clauses: "
@@ -105,6 +108,7 @@ cnfConversionSteps prop =
             ]
         Nothing -> 
             let step7 = applyStep5 step6
+                firstLiteral = pickLiteral step6
                 newValue = checkSATSplit <$> step7
             in case newValue of 
                 Just True -> unlines $
@@ -114,11 +118,12 @@ cnfConversionSteps prop =
                     , "Step 4: (Get Clause Sets): " ++ findCNFString step4 
                     , "Step 5: (Remove Tautological Clauses): " ++ findCNFString step5
                     , "DPLL Algorithm : : "
+                    , ": First found Unit Clause: " ++ unitClauseString firstUnitClause
                     , ": For each Unit Clause 'l': "
                     , ": Delete Clauses containing l: "
                     , ": Delete Not l from all clauses: "
                     , ": Final for each Unit Clause: " ++ findCNFString step6
-                    , ": There are no more unit clauses to check, so pick literal and perform case split : "
+                    , ": There are no more unit clauses to check, so pick literal and perform case split : " ++ unitClauseString firstLiteral
                     , ": Proposition is Satisfiable as case split returned [],[] : "
                     ]
                 Just False -> unlines $
@@ -132,7 +137,7 @@ cnfConversionSteps prop =
                     , ": Delete Clauses containing l: "
                     , ": Delete Not l from all clauses: "
                     , ": Final for each Unit Clause: " ++ findCNFString step6
-                    , ": There are no more unit clauses to check, so pick literal and perform case split: "
+                    , ": There are no more unit clauses to check, so pick literal and perform case split: " ++ unitClauseString firstLiteral
                     , ": Proposition is Unsatisfiable as case split returned an empty clause in the clauseSet: "
                     ]
                 Nothing -> ": Satisfiability couldn't be determined. : "
@@ -177,6 +182,10 @@ findUnitClause [] = Nothing
 findUnitClause (clause : rest)
     | unitClauseCheck clause = Just $ extractProp clause
     | otherwise = findUnitClause rest
+
+unitClauseString :: Maybe Prop -> String
+unitClauseString Nothing = "No unit clauses were found"
+unitClauseString (Just p) = show p
 
 applyStep2 :: ClauseSet -> ClauseSet
 applyStep2 clauses =
@@ -223,3 +232,5 @@ checkSAT _ = Nothing
 checkSATSplit :: [ClauseSet] -> Bool
 checkSATSplit [[],[]] = True
 checkSATSplit _ = False 
+
+
