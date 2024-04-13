@@ -7,11 +7,11 @@ module Functions
     , conjInt
     , conjElimL
     , conjElimR
-    , impElim
     , disjIntL
     , disjIntR
     , impInt
     , deMorganLaw
+    , modusTolens
     ) where
 
 import Propositional (Prop(..))
@@ -34,6 +34,13 @@ modusPonens :: Prop -> Prop -> Maybe Prop
 modusPonens (Imply p q) r
     | p == r = Just q
     | otherwise = Nothing
+modusPonens _ _ = Nothing
+
+modusTolens :: Prop -> Prop -> Maybe Prop
+modusTolens (Imply p q) r
+    | negation q == r = Just (negation p)
+    | otherwise = Nothing
+modusTolens _ _ = Nothing
 
     
 -- Negation function
@@ -55,12 +62,6 @@ conjElimR :: Prop -> Maybe Prop
 conjElimR (And _ q) = Just q
 conjElimR _ = Nothing
 
--- If implication known q returned
-impElim :: Prop -> Prop -> Maybe Prop
-impElim (Imply p q) y
-    | p == y = Just q
-    | otherwise = Nothing
-impElim _ _ = Nothing
 
 -- Introduces disjunction on the left
 disjIntL :: Prop -> Prop -> Maybe Prop

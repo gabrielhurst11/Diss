@@ -259,7 +259,7 @@ function addRules(requestType, index){
     else if (requestType === 'r 5' || requestType === 'r 6'){
         rule = "disjI,  " + index;
     }
-    else if (requestType === 'r 8'){
+    else if (requestType === 'r 8' || requestType === 'r 9'){
         rule = "impE,  " + index;
     }
     else if (requestType === 'r 4'){

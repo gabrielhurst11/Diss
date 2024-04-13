@@ -18,7 +18,7 @@ function openInputBox(title) {
         }
         $('#conjModal').modal('show');
     }
-    else if (title == 'Conjunction Introduction' || title == 'Implication Introduction' || title === 'Modus Ponens'){
+    else if (title == 'Conjunction Introduction' || title == 'Implication Introduction' || title === 'Modus Ponens' || title === 'Modus Tolens'){
         $('#intModalLabel').text('Enter Propositions for ' + title);
         $('#propositionChoice').val('');
         populateDropdown2();
@@ -31,6 +31,9 @@ function openInputBox(title) {
         }
         if (title === "Modus Ponens"){
             button.setAttribute("onclick", "sendIntroduction('r 8')")
+        }
+        if (title === "Modus Tolens"){
+            button.setAttribute("onclick", "sendIntroduction('r 9')")
         }
         $('#intModal').modal('show');
     }

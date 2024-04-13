@@ -93,6 +93,7 @@ createTruthTable prop = unlines $
     table = [(map (\var -> if find var s then 'T' else 'F') variables, eval s prop) | s <- substitutions]
     formatTableRow (vars', result) = unwords (map (:[]) vars' ++ if result then ["T"] else ["F"])
 
+
 -- Define the data type for natural deduction trees
 data NDTree = Assumption Prop
             | Rule String [NDTree] Prop
