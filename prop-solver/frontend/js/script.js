@@ -301,7 +301,7 @@ function parseExpression(expression, requestType) {
     // Map each token to its corresponding representation
     const mappedTokens = tokens.map(token => {
         // If the token is 'AND', 'OR', 'NOT', or 'IMPLY', return the uppercase version
-        if (['AND', 'OR', 'NOT', 'IMPLY'].includes(token.toUpperCase())) {
+        if (['AND', 'OR', 'NOT', 'IMPLY', 'BIIMPLY'].includes(token.toUpperCase())) {
             return token;
         }
         if (token == ','){
@@ -322,7 +322,7 @@ function parseProp(prop){
     console.log(prop);
     let stack = [];
     let queue = [];
-    let operators = ['And', 'Or', 'Imply']
+    let operators = ['And', 'Or', 'Imply', 'BiImply']
     const tokens = prop.split(' ')
     let operator = ""
     let startIndex = -1;

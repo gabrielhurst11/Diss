@@ -19,7 +19,7 @@ import Functions
 import Cnf
 
 parseExpr :: Parser Prop
-parseExpr = parseConst <|> parseVar <|> parseNot <|> parseAnd <|> parseOr <|> parseImply
+parseExpr = parseConst <|> parseVar <|> parseNot <|> parseAnd <|> parseOr <|> parseImply <|> parseBiImply
 
 parseConst :: Parser Prop
 parseConst = do
@@ -62,6 +62,14 @@ parseImply = do
     a <- parseExpr
     spaces
     Imply a <$> parseExpr
+
+parseBiImply :: Parser Prop
+parseBiImply = do
+    string "BiImply"
+    spaces
+    a <- parseExpr
+    spaces
+    BiImply a <$> parseExpr
 
 -- Define the function to parse a string into a Prop value
 parseProp :: String -> Maybe Prop

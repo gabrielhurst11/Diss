@@ -22,6 +22,7 @@ data Prop = Const Bool
           | And Prop Prop
           | Or Prop Prop
           | Imply Prop Prop
+          | BiImply Prop Prop
           deriving (Eq)
 
 -- Define a Show instance for Prop
@@ -32,6 +33,7 @@ instance Show Prop where
     show (And p q) = "( " ++ show p ++ " And " ++ show q ++ " ) "
     show (Imply a b) = "( " ++ show a ++ " Imply " ++ show b ++ " ) "
     show (Or a b) = " ( " ++ show a ++ " Or " ++ show b ++ " ) "
+    show (BiImply p q) = "( " ++ show p ++ " BiImply " ++ show q ++ " ) "
 
 -- Need to know value of variables - associates variables to logical values
 type Subst = Assoc Char Bool
@@ -53,6 +55,7 @@ eval s (Not p)     = not (eval s p)
 eval s (And p q)   = eval s p && eval s q
 eval s (Imply p q) = eval s p <= eval s q
 eval s (Or p q)    = (eval s p) || (eval s q)
+eval s (BiImply p q)  = eval s p == eval s q
 
 -- Consider all possible substitutions for variables a proposition contains
 vars :: Prop -> [Char]
@@ -62,6 +65,7 @@ vars (Not p)     = vars p
 vars (And p q)   = vars p ++ vars q
 vars (Imply p q) = vars p ++ vars q
 vars (Or p q)    = vars p ++ vars q
+vars (BiImply p q) = vars p ++ vars q
 
 -- Return all possible lists of logical values
 -- Take 2 copies of lists produced, place False in one and True the other
