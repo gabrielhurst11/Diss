@@ -70,23 +70,3 @@ application pending = do
 
 
 
-{-
-application :: ServerApp
-application pending = do
-    conn <- acceptRequest pending
-    putStrLn "Client connected"
-    forever $ do
-        -- Receive expression from client
-        message <- receiveData conn
-        let expression = T.unpack message  -- Convert Text to String
-        putStrLn $ "Received expression from client: " ++ expression
-        -- Parse the expression
-        let result = createTruthTable <$> parseProp expression
-        case result of
-            Just table -> do
-                -- Send result back to client
-                sendTextData conn (encodeUtf8 $ T.pack table)
-                putStrLn "Sent table"
-            Nothing -> putStrLn "Failed to parse expression"
--}
-

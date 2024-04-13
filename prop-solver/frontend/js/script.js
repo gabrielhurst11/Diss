@@ -91,30 +91,39 @@ function displayCNFSteps(stepsString, container) {
     // Parse the string into an array of step objects
     const stepsArray = stepsString.trim().split('\n');
 
-    // Iterate over each step and create HTML elements to represent them
+    // Create an ordered list element
+    const olElement = document.createElement('ol');
+    olElement.classList.add('list-group', 'list-group-numbered');
+
+    // Iterate over each step and create list items to represent them
     stepsArray.forEach(stepString => {
         const [stepNumber, description, result] = stepString.split(': ');
         
         // Create elements for step number, description, and result
         const stepNumberElement = document.createElement('div');
+        stepNumberElement.classList.add('ms-2', 'me-auto', 'fw-bold');
         stepNumberElement.textContent = stepNumber;
 
         const descriptionElement = document.createElement('div');
+        descriptionElement.classList.add('fw-bold');
         descriptionElement.textContent = description;
 
         const resultElement = document.createElement('div');
         resultElement.textContent = result;
 
         // Create a container for the step
-        const stepContainer = document.createElement('div');
-        stepContainer.classList.add('cnf-step');
-        stepContainer.appendChild(stepNumberElement);
-        stepContainer.appendChild(descriptionElement);
-        stepContainer.appendChild(resultElement);
+        const listItem = document.createElement('li');
+        listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
+        listItem.appendChild(stepNumberElement);
+        listItem.appendChild(descriptionElement);
+        listItem.appendChild(resultElement);
 
-        // Append the step container to the provided container
-        container.appendChild(stepContainer);
+        // Append the list item to the ordered list
+        olElement.appendChild(listItem);
     });
+
+    // Append the ordered list to the provided container
+    container.appendChild(olElement);
 }
 
 // Function to create an HTML table from the received data
