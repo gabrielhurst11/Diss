@@ -27,18 +27,27 @@ th {
 
 .banner a {
     color: #fff; /* Link color */
-    text-decoration: none; /* Remove underline from links */
     margin: 0 10px; /* Add spacing between links */
 }
 .toolbar {
-    margin-top: 10px; /* Add margin to separate it from the input box */
+    margin-top: 10px; 
 }
 @media (max-width: 767px) {
     .toolbar {
-        margin-top: 20px; /* Adjust margin for smaller screens if needed */
+        margin-top: 20px; 
     }
 }
 
 .table-wrapper {
-    padding: 10%; /* Adjust padding as needed */
+    padding: 10%; 
+}
+
+.cnf-step {
+    padding: 10px;
+    margin-bottom: 10px; 
+}
+
+.output {
+    max-width: 600px; /* Adjust the maximum width as needed */
+    margin: 0 auto; /* Center the container horizontally */
 }

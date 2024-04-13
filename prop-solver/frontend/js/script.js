@@ -83,48 +83,11 @@ function updateUI(data) {
     }
     else if (currentRequest === "SAT"){
         outputDiv.innerHTML = '';
-        displayCNFSteps(data, outputDiv);
+        outputDiv.innerHTML += createDPLLTable(data);
+        //displayCNFSteps(data, outputDiv);
     }
 }
 
-function displayCNFSteps(stepsString, container) {
-    // Parse the string into an array of step objects
-    const stepsArray = stepsString.trim().split('\n');
-
-    // Create an ordered list element
-    const olElement = document.createElement('ol');
-    olElement.classList.add('list-group', 'list-group-numbered');
-
-    // Iterate over each step and create list items to represent them
-    stepsArray.forEach(stepString => {
-        const [stepNumber, description, result] = stepString.split(': ');
-        
-        // Create elements for step number, description, and result
-        const stepNumberElement = document.createElement('div');
-        stepNumberElement.classList.add('ms-2', 'me-auto', 'fw-bold');
-        stepNumberElement.textContent = stepNumber;
-
-        const descriptionElement = document.createElement('div');
-        descriptionElement.classList.add('fw-bold');
-        descriptionElement.textContent = description;
-
-        const resultElement = document.createElement('div');
-        resultElement.textContent = result;
-
-        // Create a container for the step
-        const listItem = document.createElement('li');
-        listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
-        listItem.appendChild(stepNumberElement);
-        listItem.appendChild(descriptionElement);
-        listItem.appendChild(resultElement);
-
-        // Append the list item to the ordered list
-        olElement.appendChild(listItem);
-    });
-
-    // Append the ordered list to the provided container
-    container.appendChild(olElement);
-}
 
 // Function to create an HTML table from the received data
 function createTableFromData(data) {
@@ -158,6 +121,30 @@ function createTableFromData(data) {
 
     // Close table body and table
     tableHTML += `</tbody></table>`;
+
+    return tableHTML;
+}
+
+function createDPLLTable(data) {
+    const stepsArray = data.split('\n').filter(Boolean);
+
+    // Start creating the table HTML
+    let tableHTML = `<div class="table-wrapper"><table class="table table-bordered table-striped"><thead><tr>`;
+
+    // Create data rows
+    stepsArray.forEach(step => {
+        const [stepNumber, description, result] = step.split(': ');
+
+        // Create a table row for each step
+        tableHTML += `<tr>`;
+        tableHTML += `<td><strong>${stepNumber}</strong></td>`;
+        tableHTML += `<td>${description}</td>`;
+        tableHTML += `<td>${result}</td>`;
+        tableHTML += `</tr>`;
+    });
+
+    // Close table body and table
+    tableHTML += `</tbody></table></div>`;
 
     return tableHTML;
 }
