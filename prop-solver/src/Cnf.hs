@@ -17,6 +17,7 @@ type ClauseSet = [Clause]
 
 elimImp :: Prop -> Prop
 elimImp (Imply p q) = Or (Not (elimImp p)) (elimImp q)
+elimImp (BiImply p q) = And  (elimImp (Imply p q)) (elimImp(Imply q p))
 elimImp (And p q) = And (elimImp p) (elimImp q)
 elimImp (Or p q) = Or (elimImp p) (elimImp q)
 elimImp (Not p) = Not (elimImp p)

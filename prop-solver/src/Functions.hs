@@ -98,5 +98,9 @@ deMorganLaw (Imply p q) = do
     p' <- deMorganLaw p
     q' <- deMorganLaw q
     return (Imply p' q')
+deMorganLaw (BiImply p q) = do
+    p' <- deMorganLaw p
+    q' <- deMorganLaw q
+    return (BiImply p' q')
 deMorganLaw (Var q) = Just (Var q)
 deMorganLaw (Const p) = Just (Const p)
