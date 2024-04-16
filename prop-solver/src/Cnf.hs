@@ -6,7 +6,6 @@ module Cnf
     , pushNegation
     , distribute
     , findCNF
-    , allUnitClauses
     , findUnitClause
     , getClauseSet
     , findCNFString
@@ -70,7 +69,6 @@ showProp (Not p) = "Not " ++ showProp p
 showProp p = show p
 
 
-
 cnfConversionSteps :: Prop -> String
 cnfConversionSteps prop =
     let step1 = elimImp prop
@@ -78,84 +76,13 @@ cnfConversionSteps prop =
         step3 = distribute step2
         step4 = getClauseSet step3
         step5 = removeTautClauses step4
-        firstUnitClause = findUnitClause step5
-        step6 = allUnitClauses step5
-        value = checkSAT step6
-    in case value of
-        Just True -> unlines $
+    in unlines $
             [ "Step 1: (Eliminate Implications): " ++ show step1
             , "Step 2: (Push Negations): " ++ show step2
             , "Step 3: (Distribute): " ++ show step3
             , "Step 4: (Get Clause Sets): " ++ findCNFString step4 
             , "Step 5: (Remove Tautological Clauses): " ++ findCNFString step5
-            , "DPLL Algorithm : : "
-            , ": First found Unit Clause: " ++ unitClauseString firstUnitClause
-            , ": For each Unit Clause 'l': "
-            , ": Delete Clauses containing l: "
-            , ": Delete Not l from all clauses: "
-            , ": Final for each Unit Clause: " ++ findCNFString step6
-            , ": The Proposition is Satisfiable as it has returned an empty clause set: "
             ]
-        Just False -> unlines $
-            [ "Step 1 (Eliminate Implications): " ++ show step1
-            , "Step 2 (Push Negations): " ++ show step2
-            , "Step 3 (Distribute): " ++ show step3
-            , "Step 4 (Get Clause Sets): " ++ findCNFString step4 
-            , "Step 5 (Remove Tautological Clauses): " ++ findCNFString step5
-            , "DPLL Algorithm : : "
-            , ": First found Unit Clause: " ++ unitClauseString firstUnitClause
-            , ": For each Unit Clause 'l': "
-            , ": Delete Clauses containing l: "
-            , ": Delete Not l from all clauses: "
-            , ": Final for each Unit Clause: " ++ findCNFString step6
-            , ": The Proposition is UnSatisfiable as it has returned an empty clause within the Clause Set : "
-            ]
-        Nothing -> 
-            let step7 = applyStep5 step6
-                firstLiteral = pickLiteral step6
-                newValue = checkSATSplit <$> step7
-            in case newValue of 
-                Just True -> unlines $
-                    [ "Step 1: (Eliminate Implications): " ++ show step1
-                    , "Step 2: (Push Negations): " ++ show step2
-                    , "Step 3: (Distribute): " ++ show step3
-                    , "Step 4: (Get Clause Sets): " ++ findCNFString step4 
-                    , "Step 5: (Remove Tautological Clauses): " ++ findCNFString step5
-                    , "DPLL Algorithm : : "
-                    , ": First found Unit Clause: " ++ unitClauseString firstUnitClause
-                    , ": For each Unit Clause 'l': "
-                    , ": Delete Clauses containing l: "
-                    , ": Delete Not l from all clauses: "
-                    , ": Final for each Unit Clause: " ++ findCNFString step6
-                    , ": There are no more unit clauses to check, so pick literal and perform case split : " ++ unitClauseString firstLiteral
-                    , ": Proposition is Satisfiable as case split returned [],[] : "
-                    ]
-                Just False -> unlines $
-                    [ "Step 1: (Eliminate Implications): " ++ show step1
-                    , "Step 2: (Push Negations): " ++ show step2
-                    , "Step 3: (Distribute): " ++ show step3
-                    , "Step 4: (Get Clause Sets): " ++ findCNFString step4 
-                    , "Step 5: (Remove Tautological Clauses): " ++ findCNFString step5
-                    , "DPLL Algorithm : : "
-                    , ": For each Unit Clause 'l': "
-                    , ": Delete Clauses containing l: "
-                    , ": Delete Not l from all clauses: "
-                    , ": Final for each Unit Clause: " ++ findCNFString step6
-                    , ": There are no more unit clauses to check, so pick literal and perform case split: " ++ unitClauseString firstLiteral
-                    , ": Proposition is Unsatisfiable as case split returned an empty clause in the clauseSet: "
-                    ]
-                Nothing -> ": Satisfiability couldn't be determined. : "
-
-         
-finalDPLL :: Prop -> Maybe Bool
-finalDPLL p = case checkSAT dpllStep of
-    Just True -> Just True
-    Just False -> Just False
-    Nothing -> checkStep5
-  where
-    cnfConv = findCNF p
-    dpllStep = allUnitClauses cnfConv
-    checkStep5 = checkSATSplit <$> (applyStep5 dpllStep)
 
 
 removeTautClauses :: ClauseSet -> ClauseSet
@@ -184,15 +111,6 @@ findUnitClause (clause : rest)
     | unitClauseCheck clause = Just $ extractProp clause
     | otherwise = findUnitClause rest
 
-unitClauseString :: Maybe Prop -> String
-unitClauseString Nothing = "No unit clauses were found"
-unitClauseString (Just p) = show p
-
-
-addClause :: ClauseSet -> Prop -> ClauseSet
-addClause [] p = [[p]]
-addClause clauses p = [p] : clauses
-
 
 pickLiteral :: ClauseSet -> Maybe Prop
 pickLiteral [] = Nothing
@@ -203,42 +121,10 @@ getFirstLiteral :: Clause -> Maybe Prop
 getFirstLiteral [] = Nothing 
 getFirstLiteral (prop : _) = Just prop
 
-checkSAT :: ClauseSet -> Maybe Bool
-checkSAT [] = Just True
-checkSAT [[]] = Just False
-checkSAT _ = Nothing
-
-checkSATSplit :: [ClauseSet] -> Bool
-checkSATSplit [[],_] = True
-checkSATSplit [_,[]] = True
-checkSATSplit _ = False 
-
-applyStep2 :: ClauseSet -> ClauseSet
-applyStep2 clauses =
-    case findUnitClause clauses of
-        Just p -> applyStep2functions p clauses
-        Nothing -> clauses
-
-allUnitClauses :: ClauseSet -> ClauseSet
-allUnitClauses clauses
-    | (applyStep2 clauses) == clauses = clauses
-    | otherwise = allUnitClauses (applyStep2 clauses)
 
 applyStep2functions :: Prop -> ClauseSet -> ClauseSet
 applyStep2functions p clauses = removeNegatedProp p (removeClauseLiterals p clauses)
 
-
-
-applyStep5 :: ClauseSet -> Maybe [ClauseSet]
-applyStep5 clauses =
-    case pickLiteral clauses of
-        Just p -> do
-            let clausesAddT = addClause clauses p
-            let applyTrue = (allUnitClauses clausesAddT) 
-            let clausesAddF = addClause clauses (Not p)
-            let applyFalse = (allUnitClauses clausesAddF)
-            Just [applyTrue, applyFalse]
-        otherwise -> Nothing
 
 clauses :: ClauseSet
 clauses = [[(Var 'P'),(Var 'Q')],[(Not (Var 'P')),(Var 'R')]]
