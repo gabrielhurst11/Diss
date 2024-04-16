@@ -11,7 +11,7 @@ module Cnf
     , getClauseSet
     , findCNFString
     , dpllTree
-    , clauses
+    , clauses1
     , pickLiteral
     ) where
 
@@ -249,15 +249,15 @@ applyDPLLStep _ [[]] = [[]]
 applyDPLLStep p clauses = applyStep2functions (p) (clauses)
 
 
-data DPLLTree = Leaf Bool | Node ClauseSet DPLLTree DPLLTree
+data DPLLTree = Leaf Bool | Node Prop ClauseSet DPLLTree DPLLTree
 
 instance Show DPLLTree where
     show tree = formatTree tree 0
         where
             formatTree (Leaf True) depth = replicate depth ' ' ++ "SAT\n"
             formatTree (Leaf False) depth = replicate depth ' ' ++ "UNSAT\n"
-            formatTree (Node clauses left right) depth =
-                let nodeStr = replicate depth ' ' ++ "Node (" ++ show clauses ++ ")\n"
+            formatTree (Node p clauses left right) depth =
+                let nodeStr = replicate depth ' ' ++ "Node (" ++ show p ++ ")\n"
                     leftStr = formatTree left (depth + 4)
                     rightStr = formatTree right (depth + 4)
                 in nodeStr ++ leftStr ++ rightStr
@@ -271,12 +271,16 @@ dpllTree clauses
             Just unitProp ->
                 let applyTrue = (applyDPLLStep (unitProp) clauses)
                     applyFalse = (applyDPLLStep (negation unitProp) clauses)
-                in Node (clauses) (dpllTree (applyTrue))  (dpllTree (applyFalse)) 
+                in Node unitProp (clauses) (dpllTree (applyTrue))  (dpllTree (applyFalse)) 
             Nothing ->
                 case pickLiteral clauses of
                     Just caseSplitVar ->
                         let applyTrue = (applyDPLLStep (caseSplitVar) clauses) 
                             applyFalse = (applyDPLLStep (negation caseSplitVar) clauses)
-                        in Node (clauses) (dpllTree (applyTrue)) (dpllTree (applyFalse))
+                        in Node caseSplitVar (clauses) (dpllTree (applyTrue)) (dpllTree (applyFalse))
                     Nothing -> Leaf False
 
+
+clauses1 :: ClauseSet
+clauses1 = [[(Var 'A'),(Var 'C'),(Var 'D')],[(Not (Var 'A')),(Var 'B'),(Var 'C')],[(Var 'A'),(Var 'C'),(Not(Var 'D'))], [(Var 'A'),(Not(Var 'C')),(Var 'D')],[(Var 'A'),Not((Var 'C')),(Not(Var 'D'))]
+            , [(Not(Var 'B')),(Not(Var 'C')),(Var 'D')], [(Not(Var 'A')),(Var 'B'),(Not(Var 'C'))],[(Not(Var 'A')),(Not(Var 'B')),(Var 'C')]]
