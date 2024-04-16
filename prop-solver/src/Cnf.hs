@@ -7,8 +7,12 @@ module Cnf
     , distribute
     , findCNF
     , allUnitClauses
+    , findUnitClause
     , getClauseSet
     , findCNFString
+    , dpllTree
+    , clauses
+    , pickLiteral
     ) where
 
 import Propositional (Prop(..))
@@ -171,9 +175,6 @@ removeClauseLiterals l clauses = filter (\clause -> l `notElem` clause) clauses
 removeNegatedProp :: Prop -> ClauseSet -> ClauseSet
 removeNegatedProp p clauses = map (filter (/= negation p)) clauses
 
-applyStep2functions :: Prop -> ClauseSet -> ClauseSet
-applyStep2functions p clauses = removeNegatedProp p (removeClauseLiterals p clauses)
-
 extractProp :: Clause -> Prop
 extractProp [l] = l
 
@@ -186,28 +187,6 @@ findUnitClause (clause : rest)
 unitClauseString :: Maybe Prop -> String
 unitClauseString Nothing = "No unit clauses were found"
 unitClauseString (Just p) = show p
-
-applyStep2 :: ClauseSet -> ClauseSet
-applyStep2 clauses =
-    case findUnitClause clauses of
-        Just p -> applyStep2functions p clauses
-        Nothing -> clauses
-
-allUnitClauses :: ClauseSet -> ClauseSet
-allUnitClauses clauses
-    | (applyStep2 clauses) == clauses = clauses
-    | otherwise = allUnitClauses (applyStep2 clauses)
-
-applyStep5 :: ClauseSet -> Maybe [ClauseSet]
-applyStep5 clauses =
-    case pickLiteral clauses of
-        Just p -> do
-            let clausesAddT = addClause clauses p
-            let applyTrue = (allUnitClauses clausesAddT) 
-            let clausesAddF = addClause clauses (Not p)
-            let applyFalse = (allUnitClauses clausesAddF)
-            Just [applyTrue, applyFalse]
-        otherwise -> Nothing
 
 
 addClause :: ClauseSet -> Prop -> ClauseSet
@@ -230,7 +209,74 @@ checkSAT [[]] = Just False
 checkSAT _ = Nothing
 
 checkSATSplit :: [ClauseSet] -> Bool
-checkSATSplit [[],[]] = True
+checkSATSplit [[],_] = True
+checkSATSplit [_,[]] = True
 checkSATSplit _ = False 
 
+applyStep2 :: ClauseSet -> ClauseSet
+applyStep2 clauses =
+    case findUnitClause clauses of
+        Just p -> applyStep2functions p clauses
+        Nothing -> clauses
+
+allUnitClauses :: ClauseSet -> ClauseSet
+allUnitClauses clauses
+    | (applyStep2 clauses) == clauses = clauses
+    | otherwise = allUnitClauses (applyStep2 clauses)
+
+applyStep2functions :: Prop -> ClauseSet -> ClauseSet
+applyStep2functions p clauses = removeNegatedProp p (removeClauseLiterals p clauses)
+
+
+
+applyStep5 :: ClauseSet -> Maybe [ClauseSet]
+applyStep5 clauses =
+    case pickLiteral clauses of
+        Just p -> do
+            let clausesAddT = addClause clauses p
+            let applyTrue = (allUnitClauses clausesAddT) 
+            let clausesAddF = addClause clauses (Not p)
+            let applyFalse = (allUnitClauses clausesAddF)
+            Just [applyTrue, applyFalse]
+        otherwise -> Nothing
+
+clauses :: ClauseSet
+clauses = [[(Var 'P'),(Var 'Q')],[(Not (Var 'P')),(Var 'R')]]
+
+applyDPLLStep :: Prop -> ClauseSet -> ClauseSet
+applyDPLLStep _ [] = []
+applyDPLLStep _ [[]] = [[]]
+applyDPLLStep p clauses = applyStep2functions (p) (clauses)
+
+
+data DPLLTree = Leaf Bool | Node ClauseSet DPLLTree DPLLTree
+
+instance Show DPLLTree where
+    show tree = formatTree tree 0
+        where
+            formatTree (Leaf True) depth = replicate depth ' ' ++ "SAT\n"
+            formatTree (Leaf False) depth = replicate depth ' ' ++ "UNSAT\n"
+            formatTree (Node clauses left right) depth =
+                let nodeStr = replicate depth ' ' ++ "Node (" ++ show clauses ++ ")\n"
+                    leftStr = formatTree left (depth + 4)
+                    rightStr = formatTree right (depth + 4)
+                in nodeStr ++ leftStr ++ rightStr
+
+dpllTree :: ClauseSet -> DPLLTree
+dpllTree clauses
+    | null clauses = Leaf True  -- SAT
+    | any null clauses = Leaf False  -- UNSAT
+    | otherwise =
+        case findUnitClause clauses of
+            Just unitProp ->
+                let applyTrue = (applyDPLLStep (unitProp) clauses)
+                    applyFalse = (applyDPLLStep (negation unitProp) clauses)
+                in Node (clauses) (dpllTree (applyTrue))  (dpllTree (applyFalse)) 
+            Nothing ->
+                case pickLiteral clauses of
+                    Just caseSplitVar ->
+                        let applyTrue = (applyDPLLStep (caseSplitVar) clauses) 
+                            applyFalse = (applyDPLLStep (negation caseSplitVar) clauses)
+                        in Node (clauses) (dpllTree (applyTrue)) (dpllTree (applyFalse))
+                    Nothing -> Leaf False
 
