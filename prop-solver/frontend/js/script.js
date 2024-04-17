@@ -368,3 +368,48 @@ function parseProp(prop){
     return finalProp;
 }
 
+function parseTreeString(treeString) {
+    const stack = [];
+    let currentNode = {};
+
+    for (let char of treeString) {
+        if (char === '(') {
+            const newNode = {};
+            if (currentNode.children) {
+                currentNode.children.push(newNode);
+            } else {
+                currentNode.children = [newNode];
+            }
+            stack.push(currentNode);
+            currentNode = newNode;
+        } else if (char === ')') {
+            currentNode = stack.pop();
+        } else if (char !== ' ') {
+            currentNode.value = char;
+        }
+    }
+
+    return currentNode;
+}
+// Function to recursively generate HTML for the tree
+function generateHTML(node) {
+    let html = `<li>${node.value}`;
+    if (node.children) {
+        html += '<ul>';
+        node.children.forEach(child => {
+            html += generateHTML(child);
+        });
+        html += '</ul>';
+    }
+    html += '</li>';
+    return html;
+}
+const treeString = "(A(B(C)(D))(E(F)(G)))";
+
+// Parse the tree string
+const tree = parseTreeString(treeString);
+
+// Generate HTML for the tree
+const treeHTML = generateHTML(tree);
+
+document.getElementById('tree').innerHTML = `<ul>${treeHTML}</ul>`;
