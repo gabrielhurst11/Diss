@@ -138,16 +138,16 @@ applyDPLLStep p clauses = applyStep2functions (p) (clauses)
 data DPLLTree = Leaf Bool | Node Prop ClauseSet DPLLTree DPLLTree
 
 instance Show DPLLTree where
-    show tree = formatTree tree 0
+    show tree = formatTree tree
         where
-            formatTree (Leaf True) depth = replicate depth ' ' ++ "SAT\n"
-            formatTree (Leaf False) depth = replicate depth ' ' ++ "UNSAT\n"
-            formatTree (Node p clauses left right) depth =
-                let nodeStr = replicate depth ' ' ++ "Node (" ++ show p ++ ")\n"
-                    leftStr = formatTree left (depth + 4)
-                    rightStr = formatTree right (depth + 4)
-                in nodeStr ++ leftStr ++ rightStr
+            formatTree (Leaf True) = "SAT"
+            formatTree (Leaf False) = "UNSAT"
+            formatTree (Node p clauses left right) =
+                let leftStr = formatTree left
+                    rightStr = formatTree right
+                in "Node (" ++ show p ++ "): [" ++ leftStr ++ "," ++ rightStr ++ "]"
 
+                
 dpllTree :: ClauseSet -> DPLLTree
 dpllTree clauses
     | null clauses = Leaf True  -- SAT
