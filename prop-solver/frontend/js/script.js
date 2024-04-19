@@ -156,7 +156,16 @@ function createDPLLTable(data, outputDiv, treeDiv) {
     // Generate HTML for the tree
     const treeHTML = generateHTML(tree);
 
-    treeDiv.innerHTML = `<ul>${treeHTML}</ul>`;
+    treeDiv.innerHTML = `<ul id="dpllList" >${treeHTML}</ul>`;
+    var toggler = document.getElementsByClassName("caret");
+    var i;
+
+    for (i = 0; i < toggler.length; i++) {
+    toggler[i].addEventListener("click", function() {
+        this.parentElement.querySelector(".nested").classList.toggle("active");
+        this.classList.toggle("caret-down");
+    });
+    }
 
 }
 
@@ -420,10 +429,14 @@ function parseTreeString(treeString) {
 function generateHTML(node) {
     let html = '';
     if (node.value) {
-        html += `<li>${node.value}`;
-    } 
+        if (node.children && node.children.length > 0) {
+            html += `<li><span class="caret">${node.value}</span>`;
+        } else {
+            html += `<li>${node.value}</li>`;
+        }
+    }
     if (node.children && node.children.length > 0) {
-        html += '<ul>';
+        html += '<ul class="nested">';
         node.children.forEach(child => {
             html += generateHTML(child);
         });
@@ -432,6 +445,5 @@ function generateHTML(node) {
     html += '</li>';
     return html;
 }
-
 console.log(generateHTML(parseTreeString('( P ( Q ( SAT ) ( UNSAT ) ) ( UNSAT ) )')));
 
