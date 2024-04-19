@@ -12,6 +12,8 @@ module Cnf
     , dpllTree
     , clauses1
     , pickLiteral
+    , testProp
+    ,removeTautClauses
     ) where
 
 import Propositional (Prop(..))
@@ -76,13 +78,18 @@ cnfConversionSteps prop =
         step3 = distribute step2
         step4 = getClauseSet step3
         step5 = removeTautClauses step4
+        dplltree = dpllTree step5
     in unlines $
             [ "Step 1: (Eliminate Implications): " ++ show step1
             , "Step 2: (Push Negations): " ++ show step2
             , "Step 3: (Distribute): " ++ show step3
             , "Step 4: (Get Clause Sets): " ++ findCNFString step4 
             , "Step 5: (Remove Tautological Clauses): " ++ findCNFString step5
+            , show dplltree
             ]
+
+testProp :: Prop
+testProp = Or (And (Var 'P') (Var 'Q')) (And (Var 'Q') (Var 'P'))
 
 
 removeTautClauses :: ClauseSet -> ClauseSet
@@ -140,12 +147,12 @@ data DPLLTree = Leaf Bool | Node Prop ClauseSet DPLLTree DPLLTree
 instance Show DPLLTree where
     show tree = formatTree tree
         where
-            formatTree (Leaf True) = "SAT"
-            formatTree (Leaf False) = "UNSAT"
+            formatTree (Leaf True) = "T"
+            formatTree (Leaf False) = "F"
             formatTree (Node p clauses left right) =
                 let leftStr = formatTree left
                     rightStr = formatTree right
-                in "Node (" ++ show p ++ "): [" ++ leftStr ++ "," ++ rightStr ++ "]"
+                in "( " ++ show p ++ " ( " ++ leftStr ++ " ) ( " ++ rightStr ++ " ) )"
 
                 
 dpllTree :: ClauseSet -> DPLLTree

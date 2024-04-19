@@ -82,9 +82,10 @@ function updateUI(data) {
         addStep(data);
     }
     else if (currentRequest === "SAT"){
+        const treeDiv = document.getElementById("tree");
         outputDiv.innerHTML = '';
-        outputDiv.innerHTML += createDPLLTable(data);
-        //displayCNFSteps(data, outputDiv);
+        treeDiv.innerHTML = '';
+        createDPLLTable(data,outputDiv,treeDiv)
     }
 }
 
@@ -125,14 +126,14 @@ function createTableFromData(data) {
     return tableHTML;
 }
 
-function createDPLLTable(data) {
+function createDPLLTable(data, outputDiv, treeDiv) {
     const stepsArray = data.split('\n').filter(Boolean);
 
     // Start creating the table HTML
     let tableHTML = `<div class="table-wrapper"><table class="table table-bordered table-striped"><thead><tr>`;
 
-    // Create data rows
-    stepsArray.forEach(step => {
+    for (let i = 0; i < 5 && i < stepsArray.length; i++) {
+        const step = stepsArray[i];
         const [stepNumber, description, result] = step.split(': ');
 
         // Create a table row for each step
@@ -141,12 +142,22 @@ function createDPLLTable(data) {
         tableHTML += `<td>${description}</td>`;
         tableHTML += `<td>${result}</td>`;
         tableHTML += `</tr>`;
-    });
+    };
 
     // Close table body and table
     tableHTML += `</tbody></table></div>`;
+    console.log(stepsArray);
 
-    return tableHTML;
+    outputDiv.innerHTML += tableHTML;
+    const treeString = stepsArray[5];
+    // Parse the tree string
+    const tree = parseTreeString(treeString);
+
+    // Generate HTML for the tree
+    const treeHTML = generateHTML(tree);
+
+    treeDiv.innerHTML = `<ul>${treeHTML}</ul>`;
+
 }
 
 // WebSocket event handlers
@@ -371,9 +382,13 @@ function parseProp(prop){
 function parseTreeString(treeString) {
     const stack = [];
     let currentNode = {};
+    negateNext = false;
 
-    for (let char of treeString) {
-        if (char === '(') {
+    // Tokenize the treeString into words
+    const tokens = treeString.split(/\s+/).filter(Boolean);
+
+    for (let token of tokens) {
+        if (token === '(') {
             const newNode = {};
             if (currentNode.children) {
                 currentNode.children.push(newNode);
@@ -382,19 +397,31 @@ function parseTreeString(treeString) {
             }
             stack.push(currentNode);
             currentNode = newNode;
-        } else if (char === ')') {
+        } else if (token === ')') {
             currentNode = stack.pop();
-        } else if (char !== ' ') {
-            currentNode.value = char;
+        } else if (token === 'Not'){
+            negateNext = true;
+        } 
+        else {
+            if (negateNext === true){
+                negateNext = false;
+                currentNode.value = "Not " + token;
+            } else{
+                currentNode.value = token;
+
+            }
         }
     }
 
     return currentNode;
 }
-// Function to recursively generate HTML for the tree
+
 function generateHTML(node) {
-    let html = `<li>${node.value}`;
-    if (node.children) {
+    let html = '';
+    if (node.value) {
+        html += `<li>${node.value}`;
+    } 
+    if (node.children && node.children.length > 0) {
         html += '<ul>';
         node.children.forEach(child => {
             html += generateHTML(child);
@@ -404,12 +431,3 @@ function generateHTML(node) {
     html += '</li>';
     return html;
 }
-const treeString = "(A(B(C)(D))(E(F)(G)))";
-
-// Parse the tree string
-const tree = parseTreeString(treeString);
-
-// Generate HTML for the tree
-const treeHTML = generateHTML(tree);
-
-document.getElementById('tree').innerHTML = `<ul>${treeHTML}</ul>`;
