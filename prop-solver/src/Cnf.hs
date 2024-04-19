@@ -14,6 +14,7 @@ module Cnf
     , pickLiteral
     , testProp
     ,removeTautClauses
+    , getFirstLiteral
     ) where
 
 import Propositional (Prop(..))
@@ -110,6 +111,7 @@ removeNegatedProp :: Prop -> ClauseSet -> ClauseSet
 removeNegatedProp p clauses = map (filter (/= negation p)) clauses
 
 extractProp :: Clause -> Prop
+extractProp [(Not l)] = l
 extractProp [l] = l
 
 findUnitClause :: ClauseSet -> Maybe Prop
@@ -126,6 +128,7 @@ pickLiteral (clause : _) = getFirstLiteral clause
 -- Define a function to get the first proposition from a clause
 getFirstLiteral :: Clause -> Maybe Prop
 getFirstLiteral [] = Nothing 
+getFirstLiteral ((Not prop): _) = Just prop
 getFirstLiteral (prop : _) = Just prop
 
 
@@ -147,8 +150,8 @@ data DPLLTree = Leaf Bool | Node Prop ClauseSet DPLLTree DPLLTree
 instance Show DPLLTree where
     show tree = formatTree tree
         where
-            formatTree (Leaf True) = "T"
-            formatTree (Leaf False) = "F"
+            formatTree (Leaf True) = "SAT"
+            formatTree (Leaf False) = "UNSAT"
             formatTree (Node p clauses left right) =
                 let leftStr = formatTree left
                     rightStr = formatTree right
@@ -175,5 +178,5 @@ dpllTree clauses
 
 
 clauses1 :: ClauseSet
-clauses1 = [[(Var 'A'),(Var 'C'),(Var 'D')],[(Not (Var 'A')),(Var 'B'),(Var 'C')],[(Var 'A'),(Var 'C'),(Not(Var 'D'))], [(Var 'A'),(Not(Var 'C')),(Var 'D')],[(Var 'A'),Not((Var 'C')),(Not(Var 'D'))]
+clauses1 = [[(Not(Var 'A'))],[(Not (Var 'A')),(Var 'B'),(Var 'C')],[(Var 'A'),(Var 'C'),(Not(Var 'D'))], [(Var 'A'),(Not(Var 'C')),(Var 'D')],[(Var 'A'),Not((Var 'C')),(Not(Var 'D'))]
             , [(Not(Var 'B')),(Not(Var 'C')),(Var 'D')], [(Not(Var 'A')),(Var 'B'),(Not(Var 'C'))],[(Not(Var 'A')),(Not(Var 'B')),(Var 'C')]]
