@@ -5,7 +5,7 @@
 
 table {
     border-collapse: collapse;
-    width: 75%;
+    width: 85%;
 }
 
 th, td {
@@ -110,4 +110,25 @@ ul, #dpllList {
   /* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
   .active {
     display: block;
+  }
+  #dpllList {
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  #dpllList li {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 2px solid #141517; /* Added border */
+  }
+
+  #dpllList li ul {
+    padding-left: 20px;
+  }
+
+  #output, #tree {
+    margin-bottom: 5%;
   }
