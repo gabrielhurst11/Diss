@@ -416,6 +416,7 @@ function parseTreeString(treeString) {
     return currentNode;
 }
 
+
 function generateHTML(node) {
     let html = '';
     if (node.value) {
@@ -431,3 +432,6 @@ function generateHTML(node) {
     html += '</li>';
     return html;
 }
+
+console.log(generateHTML(parseTreeString('( P ( Q ( SAT ) ( UNSAT ) ) ( UNSAT ) )')));
+

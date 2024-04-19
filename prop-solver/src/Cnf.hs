@@ -155,7 +155,7 @@ instance Show DPLLTree where
             formatTree (Node p clauses left right) =
                 let leftStr = formatTree left
                     rightStr = formatTree right
-                in "( " ++ show p ++ " ( " ++ leftStr ++ " ) ( " ++ rightStr ++ " ) )"
+                in show p ++ " ( " ++ leftStr ++ " ) ( " ++ rightStr ++ " )"
 
                 
 dpllTree :: ClauseSet -> DPLLTree
