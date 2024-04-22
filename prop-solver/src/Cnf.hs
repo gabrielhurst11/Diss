@@ -13,7 +13,7 @@ module Cnf
     , clauses1
     , pickLiteral
     , testProp
-    ,removeTautClauses
+    , removeTautClauses
     , getFirstLiteral
     ) where
 
@@ -106,7 +106,7 @@ unitClauseCheck _ = False
 removeClauseLiterals :: Prop -> ClauseSet -> ClauseSet
 removeClauseLiterals l clauses = filter (\clause -> l `notElem` clause) clauses
 
--- Remove the negation of a proposition from clauses containing it
+
 removeNegatedProp :: Prop -> ClauseSet -> ClauseSet
 removeNegatedProp p clauses = map (filter (/= negation p)) clauses
 
@@ -125,7 +125,7 @@ pickLiteral :: ClauseSet -> Maybe Prop
 pickLiteral [] = Nothing
 pickLiteral (clause : _) = getFirstLiteral clause
 
--- Define a function to get the first proposition from a clause
+
 getFirstLiteral :: Clause -> Maybe Prop
 getFirstLiteral [] = Nothing 
 getFirstLiteral ((Not prop): _) = Just prop

@@ -13,7 +13,6 @@ import Cnf
 import Functions
 import Parser
 
--- Define a data type to represent different types of requests
 data RequestType = TruthTableRequest String  -- Request for truth table generation
              | ResolutionRequest String   -- Request for resolution step application
              | SatRequest String -- Request to apply DPLL algorithm
@@ -48,7 +47,6 @@ main = do
     runServer "127.0.0.1" 8080 application
 
 
-
 application :: ServerApp
 application pending = do
     conn <- acceptRequest pending
@@ -67,6 +65,3 @@ application pending = do
         case response of
             Just res -> sendTextData conn (encodeUtf8 $ T.pack res) --send Prop as a string
             Nothing -> sendTextData conn (encodeUtf8 $ T.pack "Failed to process request") -- send error message
-
-
-
