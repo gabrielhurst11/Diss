@@ -13,6 +13,7 @@ import Cnf
 import Functions
 import Parser
 
+
 data RequestType = TruthTableRequest String  -- Request for truth table generation
              | ResolutionRequest String   -- Request for resolution step application
              | SatRequest String -- Request to apply DPLL algorithm
@@ -22,7 +23,8 @@ instance Show RequestType where
     show (ResolutionRequest stepExpr) = "ResolutionRequest " ++ stepExpr
     show (SatRequest expr) = "SatRequest " ++ expr
 
--- Define a function to handle different types of requests
+
+-- Function to handle different types of requests
 handleRequest :: RequestType -> Maybe String
 handleRequest (TruthTableRequest expr) = createTruthTable <$> parseProp expr
 handleRequest (ResolutionRequest exprStep) = show <$> applyResolutionStep exprStep
@@ -31,6 +33,8 @@ handleRequest (SatRequest expr) =
         Just prop -> Just (cnfConversionSteps prop)
         Nothing -> Just ("Failed to parse expression")
 
+-- Determine request type from String 
+-- Defined from leading Char
 parseRequest :: String -> Maybe RequestType
 parseRequest str
     | not (null str) && head str == 't' = parseExpressionRequest TruthTableRequest (drop 2 str)  -- Skip the leading 't '
@@ -41,6 +45,7 @@ parseRequest str
 parseExpressionRequest :: (String -> RequestType) -> String -> Maybe RequestType
 parseExpressionRequest constructor expr = Just $ constructor expr
 
+-- Start WebSockets Server
 main :: IO ()
 main = do
     putStrLn "WebSocket server started"

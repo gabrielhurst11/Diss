@@ -1,8 +1,5 @@
 module Functions
-    ( condition
-    , antecedent
-    , consequent
-    , modusPonens
+    ( modusPonens
     , negation
     , conjInt
     , conjElimL
@@ -15,18 +12,6 @@ module Functions
     ) where
 
 import Propositional (Prop(..))
-
--- Set up Prop to check Modus Ponens can be applied
--- A implies B
--- A and B also defined
-condition :: Prop
-condition = Imply (Var 'A') (Var 'B')
-
-antecedent :: Prop
-antecedent = Var 'A'
-
-consequent :: Prop
-consequent = Var 'B'
 
 
 -- Implication Elimination (Modus Ponens)

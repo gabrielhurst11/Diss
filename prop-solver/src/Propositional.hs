@@ -10,10 +10,6 @@ module Propositional
     , substs
     , isTaut
     , createTruthTable
-    , NDTree(..)
-    , exampleProofTree
-    ,exampleProofTree2
-    , printNDTree
     ) where
 
 data Prop = Const Bool
@@ -43,6 +39,7 @@ type Assoc a b = [(a, b)]
 find :: Eq k => k -> Assoc k v -> v
 find k t = head [v | (k',v) <- t, k ==k']
 
+-- removes Duplicates
 rmdups :: Eq a => [a] -> [a]
 rmdups [] = []
 rmdups (x:xs) = x: filter (/= x) (rmdups xs)
@@ -83,6 +80,8 @@ substs p = map (zip vs) (bools (length vs))
 isTaut :: Prop -> Bool
 isTaut p = and [eval s p | s <- substs p]
 
+-- Maps Truth Values of Proposition Into String
+-- Formatted so frontend can Display.
 createTruthTable :: Prop -> String
 createTruthTable prop = unlines $
   header : map formatTableRow table
@@ -92,42 +91,3 @@ createTruthTable prop = unlines $
     substitutions = substs prop
     table = [(map (\var -> if find var s then 'T' else 'F') variables, eval s prop) | s <- substitutions]
     formatTableRow (vars', result) = unwords (map (:[]) vars' ++ if result then ["T"] else ["F"])
-
-
--- Define the data type for natural deduction trees
-data NDTree = Assumption Prop
-            | Rule String [NDTree] Prop
-            | Hyp String [String] Prop
-
-
-exampleProofTree :: NDTree
-exampleProofTree = Rule "Implication Introduction" [step1, step2, step3, step4] (Imply (And (Var 'P') (Var 'Q')) (And (Var 'Q') (Var 'P')))
-    where
-        step1 = Assumption (And (Var 'P') (Var 'Q'))
-        step2 = Rule "Conjunction Elimination" [Assumption (And (Var 'P') (Var 'Q'))] (Var 'P')
-        step3 = Rule "Conjunction Elimination" [ Assumption (And (Var 'P') (Var 'Q'))] (Var 'Q')
-        step4 = Rule "Conjunction Introduction" [Assumption (Var 'P')] (And (Var 'Q') (Var 'P'))
-
-exampleProofTree2 :: NDTree
-exampleProofTree2 = Rule "Implication Introduction" [step1,step2,step3,step4,step5,step6,step7] (Imply (And (And (Var 'P') (Var 'Q')) (Var 'R')) (And (Var 'P') (And (Var 'Q') (Var 'R'))))
-    where
-      step1 = Assumption (And (And (Var 'P') (Var 'Q')) (Var 'R'))
-      step2 = Hyp "ConjE" ["1"] (And (Var 'P') (Var 'Q'))
-      step3 = Hyp "ConjE" ["1"] (Var 'R')
-      step4 = Hyp "ConjE" ["2"] (Var 'P')
-      step5 = Hyp "ConjE" ["2"] (Var 'Q')
-      step6 = Hyp "ConjI" ["4,2"] (And (Var 'Q') (Var 'R'))
-      step7 = Hyp "ConjI" ["3,5"]  (And (Var 'P') (And (Var 'Q') (Var 'R')))
-
--- Function to convert NDTree to a string representation with indentation
-printNDTree :: NDTree -> IO ()
-printNDTree tree = printNDTreeHelper 0 tree
-  where
-    printNDTreeHelper indent (Assumption p) = putStrLn $ replicate indent ' ' ++ "Assumption: " ++ show p
-    printNDTreeHelper indent (Rule ruleName premises conclusion) = do
-        putStrLn $ replicate indent ' ' ++ "Rule: " ++ ruleName
-        mapM_ (printNDTreeHelper (indent + 2)) premises
-        putStrLn $ replicate indent ' ' ++ "Conclusion: " ++ show conclusion
-
-    printNDTreeHelper indent (Hyp ruleName pointer conclusion) = do
-        putStrLn $ replicate indent ' ' ++ show conclusion ++ "  " ++ ruleName ++ ", " ++ concat pointer
