@@ -122,7 +122,7 @@ ul, #dpllList {
     background-color: #f8f9fa;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border: 2px solid #141517; /* Added border */
+    border: 2px solid #141517;
   }
 
   #dpllList li ul {
@@ -132,3 +132,15 @@ ul, #dpllList {
   #output, #tree {
     margin-bottom: 5%;
   }
+  .btn.btn-outline-secondary {
+    color: #000000; /* sets the text color to white */
+    background-color: #878787; /* dark grey background */
+    border-color: #565656; /* dark grey border to match the background */
+}
+
+
+.btn.btn-outline-secondary:hover {
+    color: #fff;
+    background-color: #565656; /* slightly darker grey on hover */
+    border-color: #565656;
+}
