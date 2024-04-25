@@ -39,7 +39,7 @@ conjInt x y = Just (And x y)
 
 -- Removes conjunction Left 
 conjElimL :: Prop -> Maybe Prop
-conjElimL (And p _) =Just p 
+conjElimL (And p _ ) =Just p 
 conjElimL _ = Nothing
 
 -- Removes conjunction Right
