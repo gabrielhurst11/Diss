@@ -7,32 +7,32 @@ It contains Haskell code and functions, which represent Propositions and the ope
 A user can run the front end, connect to the back end using WebSockets, generate Truth Tables for inputted Propisitions, generate their own proofs, or use a basic SAT solver which converts a proposition into CNF before applying the DPLL Algorithm.
 
 ## Prequisites
-Before running the program
-Git
-GHC (The Glasgow Haskell Compiler)
-Stack
+Before running the program \\
+Git \\
+GHC (The Glasgow Haskell Compiler) \\
+Stack \\
 
-You can clone the Repository using the following command
-git clone https://github.com/gabrielhurst11/diss
-cd prop-solver
+You can clone the Repository using the following command \\
+git clone https://github.com/gabrielhurst11/diss \\
+cd prop-solver \\
 
 ## Running the Program
 Navigate to the prop-solver directory and run the following commands
+\\
+stack clean\\
+stack setup\\
+stack build\\
+stack run\\
 
-stack clean
-stack setup
-stack build
-stack run
 
+And to run the front end, in a separate terminal, navigate to the front end directory and run the following commands:\\
 
-And to run the front end, in a separate terminal, navigate to the front end directory and run the following commands:
-
-cd prop-solver/frontend
-python -m http.server
+cd prop-solver/frontend\\
+python -m http.server\\
 
 ## Testing
 To test the program you can run the following commands 
-
+\\
 stack test 
 
 ## Contact
