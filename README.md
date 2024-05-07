@@ -7,10 +7,10 @@ It contains Haskell code and functions, which represent Propositions and the ope
 A user can run the front end, connect to the back end using WebSockets, generate Truth Tables for inputted Propisitions, generate their own proofs, or use a basic SAT solver which converts a proposition into CNF before applying the DPLL Algorithm.
 
 ## Prequisites
-Before running the program \\
-Git \\
-GHC (The Glasgow Haskell Compiler) \\
-Stack \\
+Before running the program   
+Git  
+GHC (The Glasgow Haskell Compiler)  
+Stack  
 
 You can clone the Repository using the following command \\
 git clone https://github.com/gabrielhurst11/diss \\
