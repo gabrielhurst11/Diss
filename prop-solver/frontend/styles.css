@@ -19,15 +19,15 @@ th {
 }
 
 .banner {
-    background-color: #333; /* Dark background color */
-    color: #fff; /* Text color */
-    padding: 10px; /* Padding for the content */
-    text-align: center; /* Center align the content */
+    background-color: #333; 
+    color: #fff; 
+    padding: 10px; 
+    text-align: center; 
 }
 
 .banner a {
-    color: #fff; /* Link color */
-    margin: 0 10px; /* Add spacing between links */
+    color: #fff; 
+    margin: 0 10px; 
 }
 .toolbar {
     margin-top: 10px; 
@@ -49,8 +49,8 @@ th {
 }
 
 .output {
-    max-width: 600px; /* Adjust the maximum width as needed */
-    margin: 0 auto; /* Center the container horizontally */
+    max-width: 600px;
+    margin: 0 auto; 
 }
 body {
     font-family: Arial, sans-serif;
@@ -73,24 +73,24 @@ svg {
     stroke: #ccc;
     stroke-width: 2px;
 }
-/* Remove default bullets */
+
 ul, #dpllList {
     list-style-type: none;
   }
   
-  /* Remove margins and padding from the parent ul */
+
   #dpllList {
     margin: 0;
     padding: 0;
   }
   
-  /* Style the caret/arrow */
+
   .caret {
     cursor: pointer;
-    user-select: none; /* Prevent text selection */
+    user-select: none; 
   }
   
-  /* Create the caret/arrow with a unicode, and style it */
+
   .caret::before {
     content: "\25B6";
     color: black;
@@ -98,17 +98,17 @@ ul, #dpllList {
     margin-right: 6px;
   }
   
-  /* Rotate the caret/arrow icon when clicked on (using JavaScript) */
+
   .caret-down::before {
     transform: rotate(90deg);
   }
   
-  /* Hide the nested list */
+
   .nested {
     display: none;
   }
   
-  /* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
+
   .active {
     display: block;
   }
@@ -134,14 +134,14 @@ ul, #dpllList {
     margin-bottom: 5%;
   }
   .btn.btn-outline-secondary {
-    color: #000000; /* sets the text color to white */
-    background-color: #878787; /* dark grey background */
-    border-color: #565656; /* dark grey border to match the background */
+    color: #000000; 
+    background-color: #878787; 
+    border-color: #565656;
 }
 
 
 .btn.btn-outline-secondary:hover {
     color: #fff;
-    background-color: #565656; /* slightly darker grey on hover */
+    background-color: #565656; 
     border-color: #565656;
 }
